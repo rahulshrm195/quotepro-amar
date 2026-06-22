@@ -415,6 +415,21 @@ body {
 .quote-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .quote-card:hover::before { background: var(--gold); }
 
+/* ── READ-ONLY VIEW ── */
+.ro-banner { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; background:var(--blue-bg); border:1px solid var(--blue); border-radius:10px; padding:10px 14px; margin-bottom:18px; }
+.ro-banner-label { font-size:13px; font-weight:600; color:var(--blue); display:flex; align-items:center; gap:6px; }
+.ro-banner-actions { display:flex; gap:8px; }
+#builderMain.readonly input,
+#builderMain.readonly select,
+#builderMain.readonly textarea {
+  pointer-events: none;
+  background: var(--surface2) !important;
+  color: var(--text2) !important;
+  cursor: default;
+  border-style: dashed;
+}
+#builderMain.readonly .btn:not(.ro-keep) { display: none !important; }
+
 .qc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
 .qc-name { font-weight: 600; font-size: 16px; color: var(--text); }
 .qc-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 3px; letter-spacing: 0.5px; }
@@ -863,7 +878,7 @@ body {
     <div class="sidebar-footer">
       <button onclick="showWhatsNew()" style="width:100%;text-align:left;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:8px;padding:10px 12px;margin-bottom:10px;cursor:pointer;font-family:'DM Sans',sans-serif;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span id="versionLabel" style="font-size:11px;font-weight:700;color:var(--gold);">v5 · Jun 2026</span>
+          <span id="versionLabel" style="font-size:11px;font-weight:700;color:var(--gold);">v5.1 · Jun 2026</span>
           <span style="font-size:10px;color:var(--text3);">What's New →</span>
         </div>
       </button>
@@ -1071,10 +1086,14 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // ── APP VERSION + CHANGELOG (What's New) ──
-const APP_VERSION = '5.0';
-const APP_VERSION_LABEL = 'v5 · Jun 2026';
+const APP_VERSION = '5.1';
+const APP_VERSION_LABEL = 'v5.1 · Jun 2026';
 const VERSION_KEY = 'af_quotepro_version';
 const CHANGELOG = [
+  { v: '5.1', label: 'v5.1 · Jun 2026', notes: [
+    '👁 Tap a quote card to open a read-only view',
+    '🔒 View-only mode locks all fields (Edit button to change)'
+  ]},
   { v: '5.0', label: 'v5 · Jun 2026', notes: [
     '🔐 Secure email login (replaces PIN)',
     '🚪 Sign Out button in sidebar',
@@ -1771,7 +1790,7 @@ function renderQuotesList(quotes) {
     const badge = q.status === 'confirmed' ? 'badge-confirmed' : q.status === 'sent' ? 'badge-sent' : 'badge-draft';
     const label = q.status === 'confirmed' ? '✓ Confirmed' : q.status === 'sent' ? '↗ Sent' : '✎ Draft';
     return `<div class="quote-card">
-      <div style="cursor:pointer;" onclick="openQuote('${q.id}')">
+      <div style="cursor:pointer;" onclick="viewQuote('${q.id}')">
         <div class="qc-top">
           <div>
             <div class="qc-name">${q.client?.name || 'Unnamed Client'}</div>
@@ -1838,10 +1857,15 @@ window.goBack = function() {
   if (prev === 'builder') {
     renderBuilder();
     showScreen('builder', false);
+    if (S.viewMode) {
+      document.getElementById('topbarTitle').textContent = 'Quote (Read-only)';
+      applyReadOnly(S.currentQuote.id);
+    }
   } else if (prev === 'preview') {
     renderPreview();
     showScreen('preview', false);
   } else {
+    S.viewMode = false;
     stopAutoSave();
     showScreen('dash', false);
     loadQuotes().then(renderDashboard);
@@ -1856,6 +1880,7 @@ window.showSettings = function() {
 
 // ── NEW QUOTE ──
 window.newQuote = async function() {
+  S.viewMode = false;
   const quoteNo = await getNextQuoteNo();
   const today = new Date();
   const validity = new Date(today); validity.setDate(validity.getDate() + 30);
@@ -1881,6 +1906,7 @@ window.newQuote = async function() {
 window.openQuote = async function(id) {
   const q = S.quotes.find(x => x.id === id);
   if (!q) return;
+  S.viewMode = false;
   S.currentQuote = JSON.parse(JSON.stringify(q));
   if (!S.currentQuote.discountType) S.currentQuote.discountType = 'percent';
   if (!S.currentQuote.discountValue) S.currentQuote.discountValue = 0;
@@ -1889,6 +1915,41 @@ window.openQuote = async function(id) {
   showScreen('builder');
   startAutoSave();
 };
+
+// ── READ-ONLY VIEW ──
+window.viewQuote = async function(id) {
+  const q = S.quotes.find(x => x.id === id);
+  if (!q) return;
+  S.viewMode = true;
+  stopAutoSave();
+  S.currentQuote = JSON.parse(JSON.stringify(q));
+  if (!S.currentQuote.discountType) S.currentQuote.discountType = 'percent';
+  if (!S.currentQuote.discountValue) S.currentQuote.discountValue = 0;
+  if (!S.currentQuote.roundOff) S.currentQuote.roundOff = 0;
+  renderBuilder();
+  showScreen('builder');
+  document.getElementById('topbarTitle').textContent = 'Quote (Read-only)';
+  applyReadOnly(id);
+};
+
+function applyReadOnly(id) {
+  const main = document.getElementById('builderMain');
+  if (!main) return;
+  main.classList.add('readonly');
+  main.querySelectorAll('input, textarea').forEach(el => el.readOnly = true);
+  main.querySelectorAll('select').forEach(el => el.disabled = true);
+  const banner = document.createElement('div');
+  banner.className = 'ro-banner';
+  banner.innerHTML = `
+    <div class="ro-banner-label">🔒 Read-only view — nothing here can be changed</div>
+    <div class="ro-banner-actions">
+      <button class="btn btn-secondary btn-sm ro-keep" onclick="openPreview('${id}')">👁 Preview</button>
+      <button class="btn btn-primary btn-sm ro-keep" onclick="editFromView('${id}')">✎ Edit</button>
+    </div>`;
+  main.insertBefore(banner, main.firstChild);
+}
+
+window.editFromView = function(id) { openQuote(id); };
 
 window.duplicateQuote = async function(id) {
   const q = S.quotes.find(x => x.id === id);
