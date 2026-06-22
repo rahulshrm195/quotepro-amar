@@ -1,0 +1,2966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>QuotePro — Amar Furniture</title>
+<meta name="theme-color" content="#0f1612">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1612;
+  --bg2: #141e17;
+  --sidebar: #0a1209;
+  --surface: #1a2a1c;
+  --surface2: #223324;
+  --surface3: #2a3d2c;
+  --border: #2d4230;
+  --border2: #3a5540;
+  --text: #e8f0e8;
+  --text2: #9ab89a;
+  --text3: #5a7a5c;
+  --gold: #d4a843;
+  --gold2: #b8892e;
+  --gold3: #f0c060;
+  --gold-bg: rgba(212,168,67,0.08);
+  --gold-border: rgba(212,168,67,0.2);
+  --green: #4ade80;
+  --green-bg: rgba(74,222,128,0.08);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.08);
+  --blue: #60a5fa;
+  --blue-bg: rgba(96,165,250,0.08);
+  --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --sidebar-w: 240px;
+}
+
+/* ── LIGHT THEME ── */
+body.light {
+  --bg: #f4f1ec;
+  --bg2: #ede8e0;
+  --sidebar: #1a1a2e;
+  --surface: #ffffff;
+  --surface2: #f9f6f1;
+  --surface3: #ede8e0;
+  --border: #ddd6cc;
+  --border2: #c8bfb2;
+  --text: #1a1208;
+  --text2: #5c4a2a;
+  --text3: #9a8060;
+  --gold: #b8760a;
+  --gold2: #96600a;
+  --gold3: #d4920e;
+  --gold-bg: rgba(184,118,10,0.08);
+  --gold-border: rgba(184,118,10,0.2);
+  --green: #15803d;
+  --green-bg: rgba(21,128,61,0.08);
+  --red: #dc2626;
+  --red-bg: rgba(220,38,38,0.08);
+  --blue: #1d4ed8;
+  --blue-bg: rgba(29,78,216,0.08);
+  --shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.05);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.15);
+}
+body.light .sidebar { background: #1a1208; }
+body.light .sidebar .sb-logo { color: var(--gold3); }
+body.light .sidebar .sb-sub,
+body.light .sidebar .sidebar-footer div { color: #9a8060; }
+body.light .sidebar .snav-item { color: #c8bfb2; }
+body.light .sidebar .snav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+body.light .sidebar .snav-item.active { background: rgba(184,118,10,0.2); color: var(--gold3); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ── PIN SCREEN ── */
+#pinScreen {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--sidebar);
+  position: relative;
+  overflow: hidden;
+}
+#pinScreen::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+}
+#pinScreen::after {
+  content: 'AF';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: 320px;
+  color: rgba(212,168,67,0.03);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  pointer-events: none;
+  user-select: none;
+}
+#pinScreen.active { display: flex; }
+
+.pin-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 24px;
+  padding: 44px 40px;
+  width: 340px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-lg);
+}
+.pin-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 0 0 2px 2px;
+}
+
+.pin-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 2px;
+  letter-spacing: -0.5px;
+}
+.pin-sub {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.pin-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--surface3);
+  border: 2px solid var(--border2);
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.pin-dot.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.2); box-shadow: 0 0 12px rgba(212,168,67,0.5); }
+
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.pin-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.pin-btn:hover { background: var(--surface3); border-color: var(--border2); }
+.pin-btn:active { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); transform: scale(0.94); }
+.pin-btn.del { font-size: 16px; color: var(--text3); }
+.pin-btn.zero { grid-column: 2; }
+.pin-error { color: var(--red); font-size: 12px; margin-top: 14px; min-height: 18px; }
+
+/* ── APP SHELL — PC LAYOUT ── */
+#appShell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 200;
+}
+.sidebar-brand {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.sidebar-brand::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 24px; right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.sb-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.sb-sub {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.snav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  width: 100%;
+  text-align: left;
+}
+.snav-item:hover { background: var(--surface); color: var(--text); }
+.snav-item.active { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+.snav-icon { font-size: 17px; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 60px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text); }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.back-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text2);
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.back-btn:hover { color: var(--text); border-color: var(--border2); }
+.back-btn.visible { display: flex; }
+
+/* ── MAIN CONTENT ── */
+.app-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.main { padding: 28px 32px 48px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #0a1209;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(212,168,67,0.25);
+}
+.btn-primary:hover { background: linear-gradient(135deg, var(--gold3), var(--gold)); box-shadow: 0 6px 20px rgba(212,168,67,0.35); transform: translateY(-1px); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface3); border-color: var(--border2); }
+.btn-ghost { background: none; color: var(--text2); }
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+.btn-danger:hover { background: rgba(248,113,113,0.15); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-full { width: 100%; }
+.btn-icon { padding: 8px; border-radius: var(--radius-sm); }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  transition: all 0.15s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,168,67,0.1);
+  background: var(--surface2);
+}
+.form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.badge-draft { background: var(--surface3); color: var(--text3); border: 1px solid var(--border); }
+.badge-sent { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(96,165,250,0.2); }
+.badge-confirmed { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+
+/* ── DASHBOARD ── */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.dash-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--text); }
+.dash-title span { color: var(--gold); }
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.stat-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.stat-val { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); line-height: 1; }
+.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+/* ── QUOTE CARDS ── */
+.quotes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 16px;
+}
+.quote-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.quote-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--border2);
+  transition: all 0.2s;
+}
+.quote-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.quote-card:hover::before { background: var(--gold); }
+
+.qc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.qc-name { font-weight: 600; font-size: 16px; color: var(--text); }
+.qc-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 3px; letter-spacing: 0.5px; }
+.qc-amount { text-align: right; }
+.qc-amount-val { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); line-height: 1; }
+.qc-amount small { font-size: 11px; color: var(--text3); display: block; margin-top: 3px; font-family: 'DM Sans', sans-serif; }
+.qc-bottom { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.qc-meta { font-size: 12px; color: var(--text3); }
+.qc-actions { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--border); }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 14px;
+  margin-bottom: 20px;
+  gap: 10px;
+  max-width: 480px;
+  transition: all 0.15s;
+}
+.search-bar:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,67,0.08); }
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 11px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+}
+.search-bar input:focus { outline: none; }
+.search-bar input::placeholder { color: var(--text3); }
+.search-icon { color: var(--text3); font-size: 16px; }
+
+/* ── QUOTE BUILDER ── */
+.builder-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+.builder-main { }
+.builder-sidebar { position: sticky; top: 88px; }
+
+.builder-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.builder-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.bsh-title { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--text); }
+.bsh-toggle { color: var(--text3); font-size: 18px; transition: transform 0.2s; }
+.bsh-toggle.open { transform: rotate(180deg); }
+.builder-section-body { padding: 20px; }
+
+.room-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 16px;
+  background: var(--gold-bg);
+  border-bottom: 1px solid var(--gold-border);
+}
+.room-name-input {
+  background: none;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  flex: 1;
+  letter-spacing: 0.3px;
+}
+.room-name-input:focus { outline: none; }
+
+.items-table { width: 100%; overflow-x: auto; }
+.items-table table { width: 100%; border-collapse: collapse; min-width: 700px; }
+.items-table th {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text3);
+  padding: 9px 8px;
+  text-align: left;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+.items-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); vertical-align: middle; background: var(--surface); }
+.items-table tr:hover td { background: var(--surface2); }
+.items-table tr:last-child td { border-bottom: none; }
+.items-table input, .items-table select {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px 7px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  background: none;
+  color: var(--text);
+  transition: all 0.15s;
+}
+.items-table select option { background: var(--surface2); }
+.items-table input:focus, .items-table select:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: var(--gold-bg);
+}
+.items-table .amt-cell {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: right;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+.rate-hint { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* ── TOTALS SIDEBAR ── */
+.totals-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.totals-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), transparent);
+}
+.total-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; }
+.total-row.sub { color: var(--text2); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 4px; }
+.total-row.grand { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); margin-top: 8px; }
+.total-val { font-family: 'DM Mono', monospace; }
+.total-words { font-size: 11px; color: var(--text3); margin-top: 8px; font-style: italic; line-height: 1.5; }
+
+/* ── PREVIEW ── */
+.preview-sheet {
+  background: #fff;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 36px;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  color: #1a1a1a;
+}
+.preview-header { margin-bottom: 24px; border-bottom: 3px solid #b45309; padding-bottom: 18px; }
+.preview-company { font-family: 'Playfair Display', serif; font-size: 26px; color: #b45309; }
+.preview-company-sub { font-size: 12px; color: #666; margin-top: 2px; }
+.preview-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: #555; margin-top: 14px; }
+.preview-meta strong { color: #1a1a1a; }
+.preview-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
+.preview-table th { background: #b45309; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; }
+.preview-table td { padding: 7px 10px; border-bottom: 1px solid #e8e2d9; }
+.preview-table tr:nth-child(even) td { background: #faf8f5; }
+.preview-room-header td { background: #fffbeb !important; font-weight: 700; color: #92400e; font-size: 12px; border-left: 3px solid #b45309; }
+.preview-table .num { text-align: right; font-family: 'DM Mono', monospace; }
+.preview-subtotal td { background: #f5f2ee !important; font-weight: 600; border-top: 2px solid #d4cdc3; }
+.preview-grand td { background: #b45309 !important; color: #fff !important; font-weight: 700; font-size: 14px; }
+.preview-grand .num { font-family: 'DM Mono', monospace; }
+.preview-words { font-style: italic; font-size: 12px; color: #666; margin: 10px 0 18px; }
+.preview-tc { margin-top: 24px; border-top: 1px solid #e8e2d9; padding-top: 16px; }
+.preview-tc-title { font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #1a1a1a; }
+.preview-tc-section { margin-bottom: 12px; }
+.preview-tc-section h4 { font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.preview-tc-section div { font-size: 11px; color: #333; }
+.preview-tc-section * { color: #333 !important; }
+.preview-sign { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; color: #555; }
+.preview-sign-box { text-align: center; }
+.preview-sign-line { border-top: 1px solid #999; width: 160px; margin: 40px auto 8px; }
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 32px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── SETTINGS ── */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.settings-section { margin-bottom: 24px; }
+.settings-title { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 14px; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+.settings-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-border), transparent); }
+
+.rate-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  transition: all 0.15s;
+}
+.rate-item:hover { border-color: var(--border2); }
+.rate-item-input {
+  width: 90px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  text-align: right;
+  background: var(--surface2);
+  color: var(--text);
+}
+.rate-item-input:focus { outline: none; border-color: var(--gold); }
+.rate-updated { font-size: 10px; color: var(--text3); min-width: 70px; text-align: center; }
+
+.tc-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.tc-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-lg);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 12px 22px;
+  border-radius: 20px;
+  font-size: 13px;
+  z-index: 999;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── TEMPLATE PICKER ── */
+.template-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+.template-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.template-btn:hover { border-color: var(--gold); background: var(--gold-bg); }
+.template-btn-name { font-weight: 600; font-size: 13px; color: var(--text); }
+.template-btn-items { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
+
+/* ── CLIENT PICKER ── */
+.client-item {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.client-item:hover { border-color: var(--gold); background: var(--gold-bg); }
+.client-item-name { font-weight: 600; font-size: 14px; color: var(--text); }
+.client-item-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* ── MISC ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.empty-state { text-align: center; padding: 64px 20px; color: var(--text3); }
+.empty-icon { font-size: 56px; margin-bottom: 14px; opacity: 0.5; }
+.empty-text { font-size: 15px; margin-bottom: 20px; color: var(--text2); }
+.tag { display: inline-flex; align-items: center; padding: 3px 10px; background: var(--surface3); border: 1px solid var(--border2); border-radius: 20px; font-size: 11px; color: var(--text2); }
+
+/* ── SIDEBAR TOGGLE ── */
+.sidebar-toggle-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text2);
+  font-size: 18px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-right: 4px;
+}
+.sidebar-toggle-btn:hover { background: var(--surface3); color: var(--text); }
+.sidebar-collapsed .sidebar { transform: translateX(-100%); }
+.sidebar-collapsed .app-content { margin-left: 0; }
+.sidebar { transition: transform 0.25s ease; }
+.app-content { transition: margin-left 0.25s ease; }
+
+/* ── MOBILE ── */
+.bottomnav { display: none; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .app-content { margin-left: 0; }
+  .topbar { padding: 0 16px; }
+  .main { padding: 16px 16px 90px; }
+  .dash-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .quotes-grid { grid-template-columns: 1fr; }
+  .builder-layout { grid-template-columns: 1fr; }
+  .builder-sidebar { position: static; }
+  .settings-grid { grid-template-columns: 1fr; }
+  .bottomnav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--sidebar);
+    border-top: 1px solid var(--border);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bnav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 4px;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 10px;
+    gap: 3px;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .bnav-item.active { color: var(--gold); }
+  .bnav-icon { font-size: 20px; }
+  .modal { border-radius: 20px 20px 0 0; max-width: 100%; }
+  .modal-overlay { align-items: flex-end; }
+  .toast { bottom: 90px; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@media print {
+  .sidebar, .topbar, .bottomnav, .preview-actions, .app-content > .topbar { display: none !important; }
+  .app-content { margin-left: 0; }
+  body { background: #fff; }
+  .preview-sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- PIN SCREEN -->
+<div id="pinScreen" class="screen active">
+  <div class="pin-card">
+    <div class="pin-logo">QuotePro</div>
+    <div class="pin-sub">Amar Furniture</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <input type="password" id="pinKeyboard" maxlength="4"
+      style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+      oninput="onPinKeyboard(this.value)" autocomplete="off"
+      onfocus="if(window.innerWidth<768)this.blur();">
+    <div class="pin-grid" onclick="if(window.innerWidth>=768)document.getElementById('pinKeyboard').focus()">
+      <button class="pin-btn" onclick="pinPress('1')">1</button>
+      <button class="pin-btn" onclick="pinPress('2')">2</button>
+      <button class="pin-btn" onclick="pinPress('3')">3</button>
+      <button class="pin-btn" onclick="pinPress('4')">4</button>
+      <button class="pin-btn" onclick="pinPress('5')">5</button>
+      <button class="pin-btn" onclick="pinPress('6')">6</button>
+      <button class="pin-btn" onclick="pinPress('7')">7</button>
+      <button class="pin-btn" onclick="pinPress('8')">8</button>
+      <button class="pin-btn" onclick="pinPress('9')">9</button>
+      <button class="pin-btn zero" onclick="pinPress('0')">0</button>
+      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:12px;">You can also type PIN from keyboard</div>
+    <div class="pin-error" id="pinError"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appShell" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sb-logo">QuotePro</div>
+      <div class="sb-sub">Amar Furniture</div>
+    </div>
+    <div class="sidebar-nav">
+      <button class="snav-item active" id="snav-dash" onclick="showScreen('dash')">
+        <span class="snav-icon">🏠</span> Quotes
+      </button>
+      <button class="snav-item" id="snav-clients" onclick="showClientsModal()">
+        <span class="snav-icon">👥</span> Clients
+      </button>
+      <button class="snav-item" id="snav-settings" onclick="showSettings()">
+        <span class="snav-icon">⚙️</span> Settings
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div style="background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">v4 · Apr 2026</div>
+        <div style="font-size:10px;color:var(--text3);line-height:1.6;">
+          ✦ Seed clients auto-saved<br>
+          ✦ Keyboard PIN input<br>
+          ✦ Sidebar toggle button<br>
+          ✦ Theme toggle in Settings<br>
+          ✦ T&C editable in builder<br>
+          ✦ PDF download fixed<br>
+          ✦ WhatsApp + PDF flow
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;">Rahul Sharma · 8275407603</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="app-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+        <button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
+        <div class="topbar-title" id="topbarTitle">Quotes</div>
+      </div>
+      <div class="topbar-right" id="topbarRight"></div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div id="dashScreen" class="screen active">
+      <div class="main">
+        <div class="dash-header">
+          <div class="dash-title">All <span>Quotes</span></div>
+          <button class="btn btn-primary" onclick="newQuote()">+ New Quote</button>
+        </div>
+        <div class="dash-stats">
+          <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total Quotes</div></div>
+          <div class="stat-card"><div class="stat-val" id="statConfirmed">0</div><div class="stat-lbl">Confirmed</div></div>
+          <div class="stat-card"><div class="stat-val" id="statSent">0</div><div class="stat-lbl">Sent</div></div>
+          <div class="stat-card"><div class="stat-val" id="statDraft">0</div><div class="stat-lbl">Drafts</div></div>
+        </div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search by client name or quote number..." id="searchInput" oninput="filterQuotes()">
+        </div>
+        <div class="quotes-grid" id="quotesList"></div>
+      </div>
+    </div>
+
+    <!-- BUILDER SCREEN -->
+    <div id="builderScreen" class="screen">
+      <div class="main" id="builderMain"></div>
+    </div>
+
+    <!-- PREVIEW SCREEN -->
+    <div id="previewScreen" class="screen">
+      <div class="preview-actions">
+        <button class="btn btn-primary" onclick="printQuote()">🖨️ Print / PDF</button>
+        <button class="btn btn-secondary" onclick="downloadPDF()">⬇️ Download PDF</button>
+        <button class="btn btn-secondary" onclick="shareWhatsApp()">💬 WhatsApp</button>
+        <button class="btn btn-secondary" onclick="copyShareText()">📋 Copy Summary</button>
+      </div>
+      <div class="main" style="padding-top:16px;">
+        <div class="preview-sheet" id="previewSheet"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div id="settingsScreen" class="screen">
+      <div class="main">
+        <div class="dash-title" style="margin-bottom:24px;">Settings</div>
+        <div class="settings-grid">
+          <div>
+            <div class="settings-section">
+              <div class="settings-title">📐 Rate Master</div>
+              <p class="form-hint" style="margin-bottom:12px;">These rates show as hints when building quotes.</p>
+              <div id="rateMasterList"></div>
+              <button class="btn btn-secondary btn-sm" onclick="addRateItem()" style="margin-top:10px;">+ Add Item</button>
+            </div>
+          </div>
+          <div>
+            <div class="settings-section">
+              <div class="settings-title">🎨 Appearance</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;">
+                <div>
+                  <div style="font-weight:600;font-size:14px;color:var(--text);">Theme</div>
+                  <div style="font-size:12px;color:var(--text3);margin-top:2px;">Switch between dark and light mode</div>
+                </div>
+                <button onclick="toggleTheme()" id="themeBtn" style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:9px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500;white-space:nowrap;">🌙 Dark Mode</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-title">🏢 Company Details</div>
+              <div class="form-group">
+                <label class="form-label">Company Name</label>
+                <input class="form-input" id="setCompanyName" value="Amar Furniture">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact Person</label>
+                <input class="form-input" id="setContactName" value="Rahul Sharma">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-input" id="setPhone" value="8275407603">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Quote Prefix (e.g. AFW)</label>
+                <input class="form-input" id="setPrefix" value="AFW">
+              </div>
+              <button class="btn btn-primary" onclick="saveCompanyDetails()">Save Details</button>
+            </div>
+            <div class="settings-section" style="margin-top:24px;">
+              <div class="settings-title">🔒 Change PIN</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Current PIN</label>
+                  <input class="form-input" type="password" maxlength="4" id="oldPin" placeholder="••••">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">New PIN</label>
+                  <input class="form-input" type="password" maxlength="4" id="newPin" placeholder="••••">
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="changePin()">Change PIN</button>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="settings-section">
+          <div class="settings-title">📋 Terms & Conditions Master</div>
+          <p class="form-hint" style="margin-bottom:12px;">New quotes use these T&C. Existing quotes keep their own copy.</p>
+          <div id="tcMasterList"></div>
+          <button class="btn btn-secondary btn-sm" onclick="addTCSection()" style="margin-top:10px;">+ Add Section</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <div class="bottomnav">
+      <button class="bnav-item active" id="bnav-dash" onclick="showScreen('dash')">
+        <span class="bnav-icon">🏠</span>Quotes
+      </button>
+      <button class="bnav-item" id="bnav-clients" onclick="showClientsModal()">
+        <span class="bnav-icon">👥</span>Clients
+      </button>
+      <button class="bnav-item" id="bnav-settings" onclick="showSettings()">
+        <span class="bnav-icon">⚙️</span>Settings
+      </button>
+    </div>
+
+  </div><!-- end app-content -->
+</div><!-- end appShell -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="templateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Room</div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('templateModal')">✕</button>
+    </div>
+    <p class="form-hint" style="margin-bottom:12px;">Choose a template or add a blank room</p>
+    <div class="template-grid" id="templateGrid"></div>
+    <button class="btn btn-secondary btn-full" onclick="addBlankRoom(); closeModal('templateModal')">+ Blank Room</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clientsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Clients</div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('clientsModal')">✕</button>
+    </div>
+    <div class="search-bar" style="margin-bottom:12px;">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search clients..." id="clientSearch" oninput="filterClients()">
+    </div>
+    <div id="clientsList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="statusModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Update Status</div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('statusModal')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-secondary btn-full" onclick="setQuoteStatus('draft')">📝 Draft</button>
+      <button class="btn btn-secondary btn-full" onclick="setQuoteStatus('sent')">📤 Sent to Client</button>
+      <button class="btn btn-secondary btn-full" onclick="setQuoteStatus('confirmed')">✅ Confirmed / Order Placed</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE + APP SCRIPT -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ── FIREBASE CONFIG ──
+const firebaseConfig = {
+  apiKey: "AIzaSyARVv1P0ssuKzfpS1M59AB-rG3riIWh-2c",
+  authDomain: "amar-furniture-e4782.firebaseapp.com",
+  projectId: "amar-furniture-e4782",
+  storageBucket: "amar-furniture-e4782.firebasestorage.app",
+  messagingSenderId: "1084205045390",
+  appId: "1:1084205045390:web:db770649eb7314c49c5bdf"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── STATE ──
+window._state = {
+  pin: '1234',
+  pinInput: '',
+  currentQuote: null,
+  quotes: [],
+  clients: [],
+  rateMaster: [],
+  tcMaster: [],
+  company: { name: 'Amar Furniture', contact: 'Rahul Sharma', phone: '8275407603', prefix: 'AFW' },
+  currentStatusQuoteId: null,
+  editingRateIdx: null,
+  navHistory: [],
+};
+const S = window._state;
+
+// ── DEFAULTS ──
+const DEFAULT_RATES = [
+  { name: 'TV Unit', unit: 'SQF', rate: 1100, updated: new Date().toISOString() },
+  { name: 'Mandir', unit: 'SQF', rate: 1250, updated: new Date().toISOString() },
+  { name: 'Sofa', unit: 'RF', rate: 5500, updated: new Date().toISOString() },
+  { name: 'Partition', unit: 'SQF', rate: 1450, updated: new Date().toISOString() },
+  { name: 'Entrance Paneling', unit: 'SQF', rate: 550, updated: new Date().toISOString() },
+  { name: 'Kitchen Loft', unit: 'SQF', rate: 1450, updated: new Date().toISOString() },
+  { name: 'Kitchen Cabinet / Shutters', unit: 'SQF', rate: 1450, updated: new Date().toISOString() },
+  { name: 'SS Trolley', unit: 'RF', rate: 3600, updated: new Date().toISOString() },
+  { name: 'Dining Table', unit: 'SQF', rate: 1450, updated: new Date().toISOString() },
+  { name: 'Bed (Hydraulic)', unit: 'SQF', rate: 1450, updated: new Date().toISOString() },
+  { name: 'Bed Side Table', unit: 'LS', rate: 7000, updated: new Date().toISOString() },
+  { name: 'Sliding Wardrobe with Loft', unit: 'SQF', rate: 1700, updated: new Date().toISOString() },
+  { name: 'Sliding Wardrobe', unit: 'SQF', rate: 1600, updated: new Date().toISOString() },
+  { name: 'Wardrobe (Frame)', unit: 'SQF', rate: 1600, updated: new Date().toISOString() },
+  { name: 'Dressing Table', unit: 'SQF', rate: 1200, updated: new Date().toISOString() },
+  { name: 'Study Table', unit: 'SQF', rate: 1400, updated: new Date().toISOString() },
+  { name: 'Cupboard', unit: 'SQF', rate: 1600, updated: new Date().toISOString() },
+  { name: 'Loft (Frame)', unit: 'SQF', rate: 750, updated: new Date().toISOString() },
+  { name: 'Safety Door', unit: 'SQF', rate: 750, updated: new Date().toISOString() },
+  { name: 'Balcony Cupboard', unit: 'SQF', rate: 1250, updated: new Date().toISOString() },
+  { name: 'Centre Table', unit: 'LS', rate: 10000, updated: new Date().toISOString() },
+  { name: 'POP Work (per room)', unit: 'NOS', rate: 12000, updated: new Date().toISOString() },
+  { name: 'PVC Ceiling', unit: 'SQF', rate: 80, updated: new Date().toISOString() },
+  { name: 'Paint Work (Royale) per flat', unit: 'LS', rate: 80000, updated: new Date().toISOString() },
+];
+
+const DEFAULT_TC = [
+  {
+    title: '1. MATERIAL SPECIFICATIONS',
+    content: `• Plywood used will be Alternate Grade ISI Mark (rate considered ₹70–₹75 per sq.ft).
+• Laminate included up to ₹1600 per sheet.
+• Hardware brand will be Ebco or equivalent.
+• Final hardware selection depends on availability and design feasibility.
+• Handles included up to ₹400 per piece.
+• SS / soft-close hinges are included wherever applicable.`
+  },
+  {
+    title: '2. DOOR & SPECIAL ITEMS (IF APPLICABLE)',
+    content: `• Safety grill / jali included up to ₹2500.
+• Latch lock included up to ₹2500.
+• Handle included up to ₹1000.
+• SS hinges included for safety door.`
+  },
+  {
+    title: '3. FINISH & WORK SCOPE',
+    content: `• This quotation is valid for LAMINATE FINISH ONLY.
+• Polish, PU, duco or any paint finish is not included.
+• CNC cutting, carving or engraving is not included unless specified separately.
+• Brass strips, louvers, acrylic, T-patti and decorative items are not included.`
+  },
+  {
+    title: '4. FURNITURE-SPECIFIC CLARIFICATIONS',
+    content: `• Bed: Mattress / gadi is not included. Bed side table includes 2 drawers; additional drawers will be charged extra.
+• Wardrobe: Sliding hardware with soft-close fitting included up to ₹4500.
+• Dressing Table: Mirrors are included.
+• Sofa: Sofa cloth included up to ₹500 per meter. Cushion / gadi included only for sofa.`
+  },
+  {
+    title: '5. WHAT IS NOT INCLUDED',
+    content: `• Civil, electrical or plumbing work unless explicitly specified.
+• Any item not clearly mentioned in the quotation requires approval of the company and the client for execution.`
+  },
+  {
+    title: '6. TRANSPORTATION & SITE CONDITIONS',
+    content: `• Transportation and hamali from workshop to site are included.
+• Site should be ready for installation at the agreed time.
+• Basic surface cleaning of furniture items at the time of handover is included.
+• Final site-level deep cleaning or cleaning after other agency work is not included.`
+  },
+  {
+    title: '7. ESTIMATE & DESIGN CHANGES',
+    content: `• This is a tentative estimate and not a final bill.
+• Final amount may change due to design changes, size changes, or material / hardware upgrades.
+• Revised quotation will be shared for approval in such cases.`
+  },
+  {
+    title: '8. PAYMENT TERMS',
+    content: `• 50% advance at order confirmation.
+• 20% at hardware stage.
+• 20% at laminate stage.
+• Remaining 10% after work completion.
+• GST @18% will be charged extra if a bill is required.
+• Material difference with respect to base rate should be paid by the client as per actual at the time of purchase.`
+  },
+  {
+    title: '9. WORK TIMELINE',
+    content: `• Estimated work duration: 60 working days (considered only after advance payment and execution approval).
+• 30 days workshop work, 25 days site installation, 5 days final handover.
+• Timeline may vary depending on material availability, design finalization and payment schedule.
+• Delays due to late payments, site readiness or design changes will extend the timeline accordingly.`
+  }
+];
+
+const ROOM_TEMPLATES = [
+  {
+    name: 'Living Room',
+    icon: '🛋️',
+    items: [
+      { particulars: 'TV Unit', l: 8, b: 4.5, qty: 1, unit: 'SQF', rate: 1100 },
+      { particulars: 'Sofa RHS', l: 7.5, b: 2.75, qty: 1, unit: 'RF', rate: 5500 },
+      { particulars: 'Sofa LHS', l: 10, b: 2.75, qty: 1, unit: 'RF', rate: 5500 },
+      { particulars: 'Centre Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 10000 },
+    ]
+  },
+  {
+    name: 'Master Bedroom',
+    icon: '🛏️',
+    items: [
+      { particulars: 'Bed (Hydraulic)', l: 6.5, b: 5, qty: 1, unit: 'SQF', rate: 1450 },
+      { particulars: 'Sliding Wardrobe with Loft', l: 8, b: 8, qty: 1, unit: 'SQF', rate: 1700 },
+      { particulars: 'Dressing Table', l: 7, b: 2.5, qty: 1, unit: 'SQF', rate: 1200 },
+      { particulars: 'Bed Side Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 7000 },
+    ]
+  },
+  {
+    name: 'Kids Bedroom',
+    icon: '🧒',
+    items: [
+      { particulars: 'Bed (Hydraulic)', l: 6.5, b: 5, qty: 1, unit: 'SQF', rate: 1450 },
+      { particulars: 'Sliding Wardrobe with Loft', l: 8, b: 7, qty: 1, unit: 'SQF', rate: 1700 },
+      { particulars: 'Study Table', l: 4, b: 2.5, qty: 1, unit: 'SQF', rate: 1400 },
+    ]
+  },
+  {
+    name: 'Kitchen',
+    icon: '🍳',
+    items: [
+      { particulars: 'SS Trolley', l: 7, b: 0, qty: 1, unit: 'RF', rate: 3600 },
+      { particulars: 'Kitchen Loft', l: 10, b: 2, qty: 1, unit: 'SQF', rate: 1450 },
+      { particulars: 'Dining Table', l: 6, b: 3, qty: 1, unit: 'SQF', rate: 1450 },
+    ]
+  },
+  {
+    name: 'Grand Parents Bedroom',
+    icon: '👴',
+    items: [
+      { particulars: 'Bed', l: 6.5, b: 5, qty: 1, unit: 'SQF', rate: 1450 },
+      { particulars: 'Sliding Wardrobe with Loft', l: 8, b: 7, qty: 1, unit: 'SQF', rate: 1700 },
+      { particulars: 'Bed Side Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 7000 },
+    ]
+  },
+  {
+    name: 'POP & Paint',
+    icon: '🎨',
+    items: [
+      { particulars: 'POP Work', l: 0, b: 0, qty: 3, unit: 'NOS', rate: 12000 },
+      { particulars: 'Paint Work (Royale)', l: 0, b: 0, qty: 1, unit: 'LS', rate: 80000 },
+    ]
+  },
+];
+
+// ── EXISTING QUOTES SEED DATA ──
+const SEED_QUOTES = [
+  {
+    id: 'seed-vaibhav',
+    quoteNo: 'AFW/106/2026',
+    date: '2026-01-22',
+    validity: '2026-02-21',
+    status: 'confirmed',
+    client: { name: 'Mr. Vaibhav Bhamre Sir', phone: '', address: 'Kapaleshwar Nagar' },
+    rooms: [
+      {
+        name: 'Living Room',
+        items: [
+          { particulars: 'TV Unit', l: 8, b: 9, qty: 1, unit: 'SQF', rate: 950 },
+          { particulars: 'Mandir', l: 8, b: 3.5, qty: 1, unit: 'SQF', rate: 1250 },
+          { particulars: 'Sofa RHS', l: 7.5, b: 2.75, qty: 1, unit: 'RF', rate: 5500 },
+          { particulars: 'Sofa LHS', l: 12, b: 2.75, qty: 1, unit: 'RF', rate: 5500 },
+          { particulars: 'Partition', l: 7.25, b: 2, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Plywood Chaukhat on beam', l: 17, b: 1, qty: 1, unit: 'SQF', rate: 550 },
+          { particulars: 'Entrance Paneling (behind shoe rack)', l: 9, b: 4, qty: 1, unit: 'SQF', rate: 550 },
+        ]
+      },
+      {
+        name: 'Kitchen',
+        items: [
+          { particulars: 'Kitchen Loft', l: 10, b: 2, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Kitchen Cabinet', l: 6, b: 2, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Dining Table', l: 7, b: 3, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Cupboard in Balcony (for Soap etc)', l: 2.5, b: 2, qty: 1, unit: 'SQF', rate: 1250 },
+        ]
+      },
+      {
+        name: 'Master Bedroom',
+        items: [
+          { particulars: 'Bed', l: 6.5, b: 5, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Sliding Wardrobe with Loft', l: 8, b: 8, qty: 1, unit: 'SQF', rate: 1700 },
+          { particulars: 'Folding Study Table', l: 3, b: 1.5, qty: 1, unit: 'SQF', rate: 550 },
+          { particulars: 'Dressing Table', l: 7.25, b: 2.5, qty: 1, unit: 'SQF', rate: 1200 },
+          { particulars: 'Balcony Cupboard', l: 4, b: 4, qty: 1, unit: 'SQF', rate: 1250 },
+          { particulars: 'Storage nr Entrance', l: 9, b: 4, qty: 1, unit: 'SQF', rate: 600 },
+        ]
+      },
+      {
+        name: 'Grand Parents Bedroom',
+        items: [
+          { particulars: 'Bed', l: 6.5, b: 5, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Bed Side Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 7000 },
+          { particulars: 'Sliding Wardrobe with Loft', l: 8, b: 7, qty: 1, unit: 'SQF', rate: 1700 },
+        ]
+      },
+      {
+        name: 'Kids Bedroom',
+        items: [
+          { particulars: 'Bed', l: 6.5, b: 6, qty: 1, unit: 'SQF', rate: 1450 },
+          { particulars: 'Sliding Wardrobe with Dressing with Loft', l: 8, b: 7.5, qty: 1, unit: 'SQF', rate: 1700 },
+          { particulars: 'Study Table', l: 4, b: 2.5, qty: 1, unit: 'SQF', rate: 1400 },
+        ]
+      },
+      {
+        name: 'POP & Paint',
+        isPOP: true,
+        items: [
+          { particulars: 'POP Work (3 Rooms)', l: 0, b: 0, qty: 3, unit: 'NOS', rate: 12000 },
+          { particulars: 'POP Work Balcony PVC Ceiling', l: 9, b: 4, qty: 3, unit: 'SQF', rate: 80 },
+          { particulars: 'MS Rod Fitting for Zoka', l: 0, b: 0, qty: 1, unit: 'LS', rate: 3000 },
+          { particulars: 'Paint Work (Royale)', l: 0, b: 0, qty: 1, unit: 'LS', rate: 80000 },
+        ]
+      }
+    ],
+    notes: '',
+    seeded: true
+  },
+  {
+    id: 'seed-harshad',
+    quoteNo: 'AFW/105/2025',
+    date: '2025-11-07',
+    validity: '2025-12-07',
+    status: 'confirmed',
+    client: { name: 'Harshad Sanap Sir', phone: '', address: '' },
+    rooms: [
+      {
+        name: 'Living Room',
+        items: [
+          { particulars: 'TV Unit', l: 8.25, b: 5, qty: 1, unit: 'SQF', rate: 1050 },
+          { particulars: 'Sofa RHS (green)', l: 10, b: 0, qty: 1, unit: 'RF', rate: 5500 },
+          { particulars: 'Sofa LHS (green)', l: 7.5, b: 0, qty: 1, unit: 'RF', rate: 5500 },
+          { particulars: 'Centre Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 10000 },
+          { particulars: 'Meter Hide', l: 2.5, b: 2, qty: 1, unit: 'SQF', rate: 950 },
+          { particulars: 'PVC Moulding', l: 60, b: 0, qty: 1, unit: 'RF', rate: 45 },
+        ]
+      },
+      {
+        name: 'Kitchen',
+        items: [
+          { particulars: 'SS Trolley', l: 7, b: 0, qty: 1, unit: 'RF', rate: 3600 },
+          { particulars: 'Trolley Shutter', l: 13, b: 2.5, qty: 1, unit: 'SQF', rate: 850 },
+          { particulars: 'Box Loft', l: 23, b: 1.5, qty: 1, unit: 'SQF', rate: 1050 },
+          { particulars: 'Overhead Storage for Aquaguard', l: 2.5, b: 3, qty: 1, unit: 'SQF', rate: 1050 },
+          { particulars: 'Overhead Storage LHS (lining profile shutter)', l: 2.5, b: 2, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Overhead Storage RHS (lining profile shutter)', l: 3.5, b: 2, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Dining Table', l: 6, b: 3, qty: 1, unit: 'SQF', rate: 1200 },
+          { particulars: 'Below Basin Shutter (with one shelf inside)', l: 4, b: 2.5, qty: 1, unit: 'SQF', rate: 650 },
+        ]
+      },
+      {
+        name: 'Master Bedroom',
+        items: [
+          { particulars: 'Bed', l: 6, b: 5, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Sliding Wardrobe', l: 8.25, b: 6, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Dressing Table', l: 7, b: 2.5, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Bed Side Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 5500 },
+        ]
+      },
+      {
+        name: 'Bedroom 2',
+        items: [
+          { particulars: 'Mandir', l: 7.5, b: 2.5, qty: 1, unit: 'SQF', rate: 1500 },
+          { particulars: 'Cupboard', l: 7.5, b: 3, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Study Table', l: 3, b: 2.5, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Overhead Storage', l: 3, b: 2.5, qty: 1, unit: 'SQF', rate: 1200 },
+        ]
+      },
+      {
+        name: 'Entrance',
+        items: [
+          { particulars: 'Entrance Paneling (with 2ft chajja)', l: 0, b: 0, qty: 1, unit: 'LS', rate: 14963 },
+          { particulars: 'Safety Door', l: 7, b: 3.5, qty: 1, unit: 'SQF', rate: 650 },
+        ]
+      }
+    ],
+    notes: '',
+    seeded: true
+  },
+  {
+    id: 'seed-krishnakant',
+    quoteNo: 'AFW/104/2025',
+    date: '2025-10-16',
+    validity: '2025-11-15',
+    status: 'sent',
+    client: { name: 'Krishnakantji Layare Sir', phone: '', address: 'Ref: Sachin Sangle Sir' },
+    rooms: [
+      {
+        name: 'Living Room',
+        items: [
+          { particulars: 'TV Unit', l: 8, b: 8, qty: 1, unit: 'SQF', rate: 1200 },
+          { particulars: 'Sofa (3 Seater)', l: 10, b: 0, qty: 1, unit: 'RF', rate: 3500 },
+          { particulars: 'Sofa (2 Seater)', l: 8, b: 0, qty: 1, unit: 'RF', rate: 3500 },
+          { particulars: 'Safety Door', l: 7, b: 3, qty: 1, unit: 'SQF', rate: 750 },
+          { particulars: 'Main Door Laminate and Hardware Change', l: 7, b: 3, qty: 1, unit: 'SQF', rate: 450 },
+        ]
+      },
+      {
+        name: 'Bedroom 1',
+        items: [
+          { particulars: 'Bed (Hydraulic)', l: 6.5, b: 6, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Side Table', l: 0, b: 0, qty: 2, unit: 'LS', rate: 8500 },
+          { particulars: 'Wardrobe', l: 7, b: 6.5, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Frame Loft', l: 11, b: 2.5, qty: 1, unit: 'SQF', rate: 750 },
+        ]
+      },
+      {
+        name: 'Bedroom 2',
+        items: [
+          { particulars: 'Bed (Hydraulic)', l: 6.5, b: 6, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Side Table', l: 0, b: 0, qty: 1, unit: 'LS', rate: 8500 },
+          { particulars: 'Wardrobe', l: 7, b: 7, qty: 1, unit: 'SQF', rate: 1800 },
+          { particulars: 'Frame Loft', l: 11, b: 2.5, qty: 1, unit: 'SQF', rate: 750 },
+          { particulars: 'Dressing Table', l: 6, b: 2, qty: 1, unit: 'SQF', rate: 1600 },
+        ]
+      }
+    ],
+    notes: '',
+    seeded: true
+  },
+  {
+    id: 'seed-shivram',
+    quoteNo: 'AFW/103/2025',
+    date: '2025-08-17',
+    validity: '2025-09-16',
+    status: 'confirmed',
+    client: { name: 'Shivram Avinash', phone: '7588813105', address: 'Ref: Anna Chaudhary' },
+    rooms: [
+      {
+        name: 'Bedroom 1',
+        items: [
+          { particulars: 'Cupboard (7x3 x2)', l: 7, b: 3, qty: 2, unit: 'SQF', rate: 1600 },
+          { particulars: 'Loft', l: 11.25, b: 1.5, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Bed (Hydraulic)', l: 6, b: 5, qty: 1, unit: 'SQF', rate: 1400 },
+        ]
+      },
+      {
+        name: 'Master Bedroom',
+        items: [
+          { particulars: 'Wardrobe', l: 8.5, b: 8.5, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Bed (Hydraulic)', l: 6.5, b: 6, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Dressing Table', l: 6, b: 2, qty: 1, unit: 'SQF', rate: 1200 },
+          { particulars: 'Inverter Cupboard (lobby)', l: 7, b: 3, qty: 1, unit: 'SQF', rate: 1500 },
+        ]
+      },
+      {
+        name: 'Kitchen',
+        items: [
+          { particulars: 'SS Trolley', l: 0, b: 0, qty: 5, unit: 'RF', rate: 3200 },
+          { particulars: 'Shutters', l: 8, b: 2.5, qty: 1, unit: 'SQF', rate: 750 },
+          { particulars: 'Loft', l: 8, b: 1.5, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Overhead Storage', l: 8, b: 2.25, qty: 1, unit: 'SQF', rate: 1200 },
+          { particulars: 'Cupboard (Kitchen)', l: 9, b: 5, qty: 1, unit: 'SQF', rate: 1500 },
+        ]
+      },
+      {
+        name: 'Dining / Living',
+        items: [
+          { particulars: 'Mandir Partition', l: 8.5, b: 4, qty: 1, unit: 'SQF', rate: 850 },
+          { particulars: 'Dining Table (Wall Mount)', l: 5, b: 3, qty: 1, unit: 'SQF', rate: 850 },
+          { particulars: 'Cupboard', l: 9, b: 6, qty: 1, unit: 'SQF', rate: 1600 },
+          { particulars: 'Sofa', l: 14, b: 0, qty: 1, unit: 'RF', rate: 4800 },
+          { particulars: 'Sofa (small)', l: 2, b: 0, qty: 1, unit: 'RF', rate: 4800 },
+          { particulars: 'TV Unit', l: 12, b: 8.5, qty: 1, unit: 'SQF', rate: 950 },
+        ]
+      },
+      {
+        name: 'Kids Room',
+        items: [
+          { particulars: 'Study Table', l: 5, b: 2.5, qty: 1, unit: 'SQF', rate: 1400 },
+          { particulars: 'Loft', l: 5, b: 2, qty: 1, unit: 'SQF', rate: 1400 },
+        ]
+      }
+    ],
+    notes: 'Delivery Date: 20-09-2025',
+    seeded: true
+  }
+];
+
+// ── DRAFT AUTO-SAVE ──
+const DRAFT_KEY = 'af_quote_draft';
+
+function saveDraft() {
+  if (!S.currentQuote) return;
+  try {
+    const draft = {
+      savedAt: new Date().toISOString(),
+      quote: JSON.parse(JSON.stringify(S.currentQuote))
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch(e) { console.warn('Draft save failed:', e); }
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+function checkDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    if (!draft.quote) return;
+    const clientName = draft.quote.client?.name || 'Unnamed';
+    const savedAt = new Date(draft.savedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    const savedDate = new Date(draft.savedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    showDraftBanner(clientName, savedDate, savedAt, draft.quote);
+  } catch(e) { clearDraft(); }
+}
+
+function showDraftBanner(clientName, date, time, quote) {
+  const existing = document.getElementById('draftBanner');
+  if (existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.id = 'draftBanner';
+  banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--surface);border:2px solid var(--gold);border-radius:14px;padding:16px 20px;z-index:300;box-shadow:var(--shadow-lg);max-width:420px;width:90%;display:flex;flex-direction:column;gap:10px;animation:slideDown 0.3s ease;';
+  banner.innerHTML = '<div style="display:flex;align-items:flex-start;gap:12px;">'
+    + '<div style="font-size:24px;">💾</div>'
+    + '<div style="flex:1;">'
+    + '<div style="font-weight:700;font-size:14px;color:var(--gold);">Unsaved Draft Found</div>'
+    + '<div style="font-size:13px;color:var(--text);margin-top:2px;"><strong>' + clientName + '</strong> · ' + date + ' at ' + time + '</div>'
+    + '<div style="font-size:11px;color:var(--text3);margin-top:2px;">Restore to continue where you left off</div>'
+    + '</div></div>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<button onclick="restoreDraft()" style="flex:1;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a1209;border:none;border-radius:8px;padding:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;">✓ Restore Draft</button>'
+    + '<button onclick="discardDraft()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text2);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;">Discard</button>'
+    + '</div>';
+  document.body.appendChild(banner);
+  window._pendingDraft = quote;
+}
+
+window.restoreDraft = function() {
+  if (!window._pendingDraft) return;
+  S.currentQuote = window._pendingDraft;
+  window._pendingDraft = null;
+  document.getElementById('draftBanner')?.remove();
+  renderBuilder();
+  showScreen('builder', false);
+  startAutoSave();
+  toast('Draft restored ✓');
+};
+
+window.discardDraft = function() {
+  clearDraft();
+  window._pendingDraft = null;
+  document.getElementById('draftBanner')?.remove();
+  toast('Draft discarded');
+};
+
+// ── LAYER 2: AUTO-SAVE TO FIREBASE EVERY 60s ──
+let _autoSaveTimer = null;
+let _autoSaveIndicator = null;
+
+function startAutoSave() {
+  stopAutoSave();
+  _autoSaveTimer = setInterval(autoSaveToFirebase, 60000);
+}
+
+function stopAutoSave() {
+  if (_autoSaveTimer) { clearInterval(_autoSaveTimer); _autoSaveTimer = null; }
+}
+
+async function autoSaveToFirebase() {
+  if (!S.currentQuote) return;
+  collectBuilderData();
+  const q = S.currentQuote;
+  if (!q.client.name) return; // Don't auto-save empty quotes
+  try {
+    const cleanTC = (q.tc || S.tcMaster || []).map(s => ({ title: String(s.title||''), content: String(s.content||'') }));
+    const cleanRooms = (q.rooms || []).map(r => ({
+      name: String(r.name||''), isPOP: Boolean(r.isPOP),
+      items: (r.items||[]).map(item => ({
+        particulars: String(item.particulars||''), l: parseFloat(item.l)||0,
+        b: parseFloat(item.b)||0, qty: parseFloat(item.qty)||1,
+        unit: String(item.unit||'SQF'), rate: parseFloat(item.rate)||0
+      }))
+    }));
+    const data = {
+      quoteNo: String(q.quoteNo||''), date: String(q.date||''),
+      validity: String(q.validity||''), status: 'draft',
+      client: { name: String(q.client.name||''), phone: String(q.client.phone||''), address: String(q.client.address||'') },
+      rooms: cleanRooms, notes: String(q.notes||''), tc: cleanTC,
+      autoSaved: true, updatedAt: serverTimestamp()
+    };
+    if (q.id) {
+      await updateDoc(doc(db, 'quotes', q.id), data);
+    } else {
+      data.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(db, 'quotes'), data);
+      S.currentQuote.id = ref.id;
+    }
+    showAutoSaveIndicator();
+  } catch(e) { console.warn('Auto-save failed:', e); }
+}
+
+function showAutoSaveIndicator() {
+  const totalsEl = document.getElementById('totalsBlock');
+  if (!totalsEl) return;
+  const existing = document.getElementById('autoSaveIndicator');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'autoSaveIndicator';
+  el.style.cssText = 'font-size:11px;color:var(--green);margin-top:8px;text-align:center;';
+  el.textContent = '✓ Auto-saved ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+  totalsEl.appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+// ── PIN LOGIC ──
+window.pinPress = function(d) {
+  if (S.pinInput.length >= 4) return;
+  S.pinInput += d;
+  updatePinDots();
+  if (S.pinInput.length === 4) {
+    setTimeout(checkPin, 200);
+  }
+};
+window.pinDel = function() {
+  S.pinInput = S.pinInput.slice(0, -1);
+  updatePinDots();
+};
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < S.pinInput.length);
+  }
+}
+function checkPin() {
+  const stored = localStorage.getItem('af_pin') || '1234';
+  if (S.pinInput === stored) {
+    document.getElementById('pinScreen').classList.remove('active');
+    document.getElementById('appShell').style.display = 'flex';
+    initApp();
+  } else {
+    document.getElementById('pinError').textContent = 'Incorrect PIN. Try again.';
+    S.pinInput = '';
+    document.getElementById('pinKeyboard').value = '';
+    updatePinDots();
+    setTimeout(() => document.getElementById('pinError').textContent = '', 2000);
+  }
+}
+
+// Global keyboard listener for PIN screen
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('pinScreen').classList.contains('active')) return;
+  if (e.key >= '0' && e.key <= '9') { pinPress(e.key); }
+  else if (e.key === 'Backspace') { pinDel(); }
+});
+
+// Focus hidden input on pin screen click - PC only
+document.getElementById('pinScreen').addEventListener('click', function() {
+  if (window.innerWidth >= 768) {
+    const kb = document.getElementById('pinKeyboard');
+    if (kb) kb.focus();
+  }
+});
+
+// ── INIT ──
+async function initApp() {
+  // Apply saved theme
+  const savedTheme = localStorage.getItem('af_theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = '☀️ Light Mode';
+  }
+  await loadSettings();
+  await seedDataIfNeeded();
+  await loadQuotes();
+  renderDashboard();
+  // Check for unsaved draft after a short delay
+  setTimeout(checkDraft, 800);
+}
+
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'main'));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.rateMaster) S.rateMaster = d.rateMaster;
+      if (d.tcMaster) S.tcMaster = d.tcMaster;
+      if (d.company) S.company = { ...S.company, ...d.company };
+    } else {
+      S.rateMaster = DEFAULT_RATES;
+      S.tcMaster = DEFAULT_TC;
+      await saveSettings();
+    }
+  } catch(e) { S.rateMaster = DEFAULT_RATES; S.tcMaster = DEFAULT_TC; }
+}
+
+async function saveSettings() {
+  try {
+    await setDoc(doc(db, 'settings', 'main'), {
+      rateMaster: S.rateMaster,
+      tcMaster: S.tcMaster,
+      company: S.company
+    });
+  } catch(e) { console.error(e); }
+}
+
+async function seedDataIfNeeded() {
+  try {
+    const snap = await getDoc(doc(db, 'meta', 'seeded'));
+    if (snap.exists()) return;
+    // Seed quotes
+    for (const q of SEED_QUOTES) {
+      await setDoc(doc(db, 'quotes', q.id), {
+        ...q,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+    // Seed clients from existing quotes
+    for (const q of SEED_QUOTES) {
+      if (q.client && q.client.name) {
+        await saveClient(q.client);
+      }
+    }
+    await setDoc(doc(db, 'meta', 'seeded'), { done: true, at: serverTimestamp() });
+    await setDoc(doc(db, 'meta', 'counter'), { last: 106 });
+  } catch(e) { console.error('Seed error', e); }
+}
+
+async function loadQuotes() {
+  try {
+    const q = query(collection(db, 'quotes'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    S.quotes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) { console.error(e); }
+}
+
+async function getNextQuoteNo() {
+  try {
+    const snap = await getDoc(doc(db, 'meta', 'counter'));
+    const last = snap.exists() ? (snap.data().last || 106) : 106;
+    const next = last + 1;
+    const year = new Date().getFullYear();
+    await setDoc(doc(db, 'meta', 'counter'), { last: next });
+    return `${S.company.prefix}/${next}/${year}`;
+  } catch(e) { return `${S.company.prefix}/${Date.now()}/${new Date().getFullYear()}`; }
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const total = S.quotes.length;
+  const confirmed = S.quotes.filter(q => q.status === 'confirmed').length;
+  const sent = S.quotes.filter(q => q.status === 'sent').length;
+  const draft = S.quotes.filter(q => q.status === 'draft').length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statConfirmed').textContent = confirmed;
+  if (document.getElementById('statSent')) document.getElementById('statSent').textContent = sent;
+  document.getElementById('statDraft').textContent = draft;
+  renderQuotesList(S.quotes);
+}
+
+function renderQuotesList(quotes) {
+  const el = document.getElementById('quotesList');
+  if (!quotes.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No quotes yet. Create your first one!</div><button class="btn btn-primary" onclick="newQuote()">+ New Quote</button></div>`;
+    return;
+  }
+  el.innerHTML = quotes.map(q => {
+    const total = calcGrandTotal(q);
+    const badge = q.status === 'confirmed' ? 'badge-confirmed' : q.status === 'sent' ? 'badge-sent' : 'badge-draft';
+    const label = q.status === 'confirmed' ? '✓ Confirmed' : q.status === 'sent' ? '↗ Sent' : '✎ Draft';
+    return `<div class="quote-card">
+      <div style="cursor:pointer;" onclick="openQuote('${q.id}')">
+        <div class="qc-top">
+          <div>
+            <div class="qc-name">${q.client?.name || 'Unnamed Client'}</div>
+            <div class="qc-num">${q.quoteNo || '—'}</div>
+          </div>
+          <div class="qc-amount">
+            <div class="qc-amount-val">₹${fmtNum(total)}</div>
+            <small>${q.date || ''}</small>
+          </div>
+        </div>
+        <div class="qc-bottom">
+          <span class="badge ${badge}">${label}</span>
+          <div class="qc-meta">${q.client?.address || ''}</div>
+        </div>
+      </div>
+      <div class="qc-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openPreview('${q.id}')">👁 Preview</button>
+        <button class="btn btn-secondary btn-sm" onclick="openQuote('${q.id}')">✎ Edit</button>
+        <button class="btn btn-secondary btn-sm" onclick="duplicateQuote('${q.id}')">📋 Duplicate</button>
+        <button class="btn btn-secondary btn-sm" onclick="openStatusModal('${q.id}')">📌 Status</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteQuote('${q.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.filterQuotes = function() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = S.quotes.filter(x =>
+    (x.client?.name || '').toLowerCase().includes(q) ||
+    (x.quoteNo || '').toLowerCase().includes(q)
+  );
+  renderQuotesList(filtered);
+};
+
+// ── SCREENS ──
+window.showScreen = function(name, trackHistory) {
+  // Track navigation history (default true unless explicitly false)
+  if (trackHistory !== false) {
+    const current = document.querySelector('.screen.active')?.id?.replace('Screen','');
+    if (current && current !== name) S.navHistory.push(current);
+    if (S.navHistory.length > 10) S.navHistory.shift();
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name + 'Screen').classList.add('active');
+  // sidebar nav
+  document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
+  const sItem = document.getElementById('snav-' + name);
+  if (sItem) sItem.classList.add('active');
+  // mobile bottom nav
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  const bItem = document.getElementById('bnav-' + name);
+  if (bItem) bItem.classList.add('active');
+  // back button
+  const backBtn = document.getElementById('backBtn');
+  backBtn.classList.toggle('visible', name !== 'dash' && name !== 'settings');
+  // topbar title
+  const titles = { dash: 'Quotes', builder: 'Quote Builder', preview: 'Quote Preview', settings: 'Settings' };
+  document.getElementById('topbarTitle').textContent = titles[name] || '';
+};
+
+window.goBack = function() {
+  const prev = S.navHistory.pop();
+  if (prev === 'builder') {
+    renderBuilder();
+    showScreen('builder', false);
+  } else if (prev === 'preview') {
+    renderPreview();
+    showScreen('preview', false);
+  } else {
+    stopAutoSave();
+    showScreen('dash', false);
+    loadQuotes().then(renderDashboard);
+  }
+};
+
+window.showSettings = function() {
+  renderSettings();
+  showScreen('settings');
+  document.getElementById('bnav-settings').classList.add('active');
+};
+
+// ── NEW QUOTE ──
+window.newQuote = async function() {
+  const quoteNo = await getNextQuoteNo();
+  const today = new Date();
+  const validity = new Date(today); validity.setDate(validity.getDate() + 30);
+  S.currentQuote = {
+    id: null,
+    quoteNo,
+    date: today.toISOString().slice(0,10),
+    validity: validity.toISOString().slice(0,10),
+    status: 'draft',
+    client: { name: '', phone: '', address: '' },
+    rooms: [],
+    notes: '',
+    tc: JSON.parse(JSON.stringify(S.tcMaster)),
+    discountType: 'percent',
+    discountValue: 0,
+    roundOff: 0
+  };
+  renderBuilder();
+  showScreen('builder');
+  startAutoSave();
+};
+
+window.openQuote = async function(id) {
+  const q = S.quotes.find(x => x.id === id);
+  if (!q) return;
+  S.currentQuote = JSON.parse(JSON.stringify(q));
+  if (!S.currentQuote.discountType) S.currentQuote.discountType = 'percent';
+  if (!S.currentQuote.discountValue) S.currentQuote.discountValue = 0;
+  if (!S.currentQuote.roundOff) S.currentQuote.roundOff = 0;
+  renderBuilder();
+  showScreen('builder');
+  startAutoSave();
+};
+
+window.duplicateQuote = async function(id) {
+  const q = S.quotes.find(x => x.id === id);
+  if (!q) return;
+  const quoteNo = await getNextQuoteNo();
+  const today = new Date();
+  const validity = new Date(today); validity.setDate(validity.getDate() + 30);
+  S.currentQuote = JSON.parse(JSON.stringify(q));
+  S.currentQuote.id = null;
+  S.currentQuote.quoteNo = quoteNo;
+  S.currentQuote.date = today.toISOString().slice(0,10);
+  S.currentQuote.validity = validity.toISOString().slice(0,10);
+  S.currentQuote.status = 'draft';
+  S.currentQuote.client = { ...S.currentQuote.client };
+  renderBuilder();
+  showScreen('builder');
+  startAutoSave();
+  toast('Quote duplicated — update client details');
+};
+
+window.deleteQuote = async function(id) {
+  if (!confirm('Delete this quote?')) return;
+  try {
+    await deleteDoc(doc(db, 'quotes', id));
+    S.quotes = S.quotes.filter(q => q.id !== id);
+    renderDashboard();
+    toast('Quote deleted');
+  } catch(e) { toast('Error deleting'); }
+};
+
+window.openStatusModal = function(id) {
+  S.currentStatusQuoteId = id;
+  openModal('statusModal');
+};
+
+window.setQuoteStatus = async function(status) {
+  const id = S.currentStatusQuoteId;
+  if (!id) return;
+  try {
+    await updateDoc(doc(db, 'quotes', id), { status, updatedAt: serverTimestamp() });
+    const q = S.quotes.find(x => x.id === id);
+    if (q) q.status = status;
+    renderDashboard();
+    closeModal('statusModal');
+    toast('Status updated');
+  } catch(e) { toast('Error updating status'); }
+};
+
+// ── BUILDER ──
+function renderBuilder() {
+  const q = S.currentQuote;
+  const html = `
+    <div class="builder-layout">
+      <div class="builder-main">
+        <div class="builder-section">
+          <div class="builder-section-header" onclick="toggleSection(this)">
+            <span class="bsh-title">👤 Client Details</span>
+            <span class="bsh-toggle open">▾</span>
+          </div>
+          <div class="builder-section-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Client Name</label>
+                <input class="form-input" id="clientName" value="${q.client.name}" placeholder="Mr. / Mrs. ...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-input" id="clientPhone" value="${q.client.phone}" placeholder="Mobile number">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Site Address</label>
+                <input class="form-input" id="clientAddress" value="${q.client.address}" placeholder="Flat / Society / Area">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Quote No.</label>
+                <input class="form-input" id="quoteNo" value="${q.quoteNo}">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Quote Date</label>
+                <input class="form-input" type="date" id="quoteDate" value="${q.date}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Valid Until</label>
+                <input class="form-input" type="date" id="quoteValidity" value="${q.validity}">
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="showClientsModal(true)">📁 Load Existing Client</button>
+          </div>
+        </div>
+
+        <div class="builder-section">
+          <div class="builder-section-header" onclick="toggleSection(this)">
+            <span class="bsh-title">🪵 Items by Room</span>
+            <span class="bsh-toggle open">▾</span>
+          </div>
+          <div class="builder-section-body">
+            <div id="roomsContainer"></div>
+            <button class="btn btn-secondary btn-full" onclick="openModal('templateModal')">+ Add Room</button>
+          </div>
+        </div>
+
+        <div class="builder-section">
+          <div class="builder-section-header" onclick="toggleSection(this)">
+            <span class="bsh-title">📋 Terms & Conditions</span>
+            <span class="bsh-toggle open">▾</span>
+          </div>
+          <div class="builder-section-body">
+            <p class="form-hint" style="margin-bottom:10px;">Pre-filled from T&C Master. Edit here for this quote only.</p>
+            <div id="tcBuilderList"></div>
+          </div>
+        </div>
+
+        <div class="builder-section">
+          <div class="builder-section-header" onclick="toggleSection(this)">
+            <span class="bsh-title">📝 Notes</span>
+            <span class="bsh-toggle open">▾</span>
+          </div>
+          <div class="builder-section-body">
+            <textarea class="form-input form-textarea" id="quoteNotes" rows="3" placeholder="Any special notes for this quote...">${q.notes || ''}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="builder-sidebar">
+        <div class="totals-block">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);margin-bottom:14px;">🧮 Totals</div>
+          <div id="totalsBlock"></div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-primary btn-full" onclick="saveQuote()">💾 Save Quote</button>
+          <button class="btn btn-secondary btn-full" onclick="previewFromBuilder()">👁 Preview</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('builderMain').innerHTML = html;
+  renderRooms();
+  renderTCBuilder();
+  renderTotalsBlock();
+  renderTemplateGrid();
+}
+
+function renderRooms() {
+  const container = document.getElementById('roomsContainer');
+  if (!container) return;
+  container.innerHTML = S.currentQuote.rooms.map((room, ri) => renderRoomBlock(room, ri)).join('');
+}
+
+function renderRoomBlock(room, ri) {
+  const isPOP = room.isPOP;
+  return `<div class="room-block" id="room-${ri}">
+    <div class="room-header">
+      <input class="room-name-input" value="${room.name}" onchange="updateRoomName(${ri}, this.value)" placeholder="Room Name">
+      <div style="display:flex;gap:6px;">
+        ${isPOP ? '<span class="tag">POP/Paint</span>' : ''}
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleRoomPOP(${ri})" title="Toggle POP/Paint section">🎨</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="removeRoom(${ri})">🗑</button>
+      </div>
+    </div>
+    <div class="items-table">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th style="width:26%">Particulars</th>
+            <th style="width:8%">L</th>
+            <th style="width:8%">B</th>
+            <th style="width:6%">Qty</th>
+            <th style="width:10%">Unit</th>
+            <th style="width:10%">Area</th>
+            <th style="width:12%">Rate</th>
+            <th style="width:12%">Amount</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody id="items-${ri}">
+          ${room.items.map((item, ii) => renderItemRow(item, ri, ii)).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid var(--border);background:var(--surface2);">
+      <button class="btn btn-ghost btn-sm" onclick="addItemToRoom(${ri})">+ Add Item</button>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);">
+        Room Total: <span style="color:var(--gold);font-family:'DM Mono',monospace;" id="room-total-${ri}">₹${fmtNum(room.items.reduce((s,item)=>s+calcItemAmt(item),0))}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getRateHint(particulars) {
+  if (!particulars) return '';
+  const p = particulars.toLowerCase();
+  const match = S.rateMaster.find(r => p.includes(r.name.toLowerCase().split(' ')[0]));
+  return match ? `Hint: ₹${match.rate}/${match.unit}` : '';
+}
+
+function renderItemRow(item, ri, ii) {
+  const area = calcArea(item);
+  const amt = calcItemAmt(item);
+  const hint = getRateHint(item.particulars);
+  return `<tr id="item-${ri}-${ii}">
+    <td style="width:36px;text-align:center;padding:4px 2px;">
+      <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
+        <button onclick="moveItem(${ri},${ii},-1)" style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text2);font-size:10px;padding:2px 6px;line-height:1;width:24px;" title="Move up">▲</button>
+        <button onclick="moveItem(${ri},${ii},1)" style="background:var(--surface3);border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text2);font-size:10px;padding:2px 6px;line-height:1;width:24px;" title="Move down">▼</button>
+      </div>
+    </td>
+    <td><input value="${item.particulars || ''}" oninput="updateItem(${ri},${ii},'particulars',this.value)" placeholder="Item name..." style="min-width:100px;width:100%;"></td>
+    <td><input type="number" value="${item.l || ''}" oninput="updateItem(${ri},${ii},'l',this.value)" placeholder="0" style="width:52px;"></td>
+    <td><input type="number" value="${item.b || ''}" oninput="updateItem(${ri},${ii},'b',this.value)" placeholder="0" style="width:52px;"></td>
+    <td><input type="number" value="${item.qty || 1}" oninput="updateItem(${ri},${ii},'qty',this.value)" placeholder="1" style="width:40px;"></td>
+    <td>
+      <select oninput="updateItem(${ri},${ii},'unit',this.value)" style="width:60px;">
+        ${['SQF','RF','LS','NOS'].map(u => `<option ${item.unit===u?'selected':''}>${u}</option>`).join('')}
+      </select>
+    </td>
+    <td style="text-align:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);">${area > 0 ? area.toFixed(2) : '—'}</td>
+    <td>
+      <input type="number" value="${item.rate || ''}" oninput="updateItem(${ri},${ii},'rate',this.value)" placeholder="0" style="width:72px;">
+      ${hint ? `<div class="rate-hint">${hint}</div>` : ''}
+    </td>
+    <td class="amt-cell">₹${fmtNum(amt)}</td>
+    <td><button class="btn btn-ghost btn-icon" style="padding:4px;" onclick="removeItem(${ri},${ii})">✕</button></td>
+  </tr>`;
+}
+
+function calcArea(item) {
+  if (item.unit === 'RF') return parseFloat(item.l) || 0;
+  if (item.unit === 'LS' || item.unit === 'NOS') return 0;
+  const l = parseFloat(item.l) || 0;
+  const b = parseFloat(item.b) || 0;
+  return l * b;
+}
+
+function calcItemAmt(item) {
+  const qty = parseFloat(item.qty) || 1;
+  const rate = parseFloat(item.rate) || 0;
+  if (item.unit === 'LS') return qty * rate;
+  if (item.unit === 'NOS') return qty * rate;
+  if (item.unit === 'RF') return (parseFloat(item.l) || 0) * qty * rate;
+  const area = calcArea(item);
+  return area * qty * rate;
+}
+
+window.updateItem = function(ri, ii, field, val) {
+  const item = S.currentQuote.rooms[ri].items[ii];
+  item[field] = field === 'particulars' || field === 'unit' ? val : parseFloat(val) || 0;
+  // Re-render just the amount cell and area
+  const row = document.getElementById(`item-${ri}-${ii}`);
+  if (row) {
+    const area = calcArea(item);
+    const amt = calcItemAmt(item);
+    row.cells[6].textContent = area > 0 ? area.toFixed(2) : '—';
+    const amtCell = row.querySelector('.amt-cell');
+    if (amtCell) amtCell.textContent = '₹' + fmtNum(amt);
+    if (field === 'particulars') {
+      const hint = getRateHint(val);
+      const rateCell = row.cells[8];
+      const hintEl = rateCell.querySelector('.rate-hint');
+      if (hintEl) hintEl.textContent = hint;
+      else if (hint) rateCell.insertAdjacentHTML('beforeend', `<div class="rate-hint">${hint}</div>`);
+    }
+  }
+  renderTotalsBlock();
+  // Update room subtotal
+  const roomTotalEl = document.getElementById('room-total-' + ri);
+  if (roomTotalEl) {
+    const roomTotal = S.currentQuote.rooms[ri].items.reduce((s, item) => s + calcItemAmt(item), 0);
+    roomTotalEl.textContent = '₹' + fmtNum(roomTotal);
+  }
+  saveDraft();
+};
+
+window.updateRoomName = function(ri, val) { S.currentQuote.rooms[ri].name = val; saveDraft(); };
+window.toggleRoomPOP = function(ri) { S.currentQuote.rooms[ri].isPOP = !S.currentQuote.rooms[ri].isPOP; renderRooms(); renderTotalsBlock(); };
+window.removeRoom = function(ri) { S.currentQuote.rooms.splice(ri, 1); renderRooms(); renderTotalsBlock(); };
+window.removeItem = function(ri, ii) { S.currentQuote.rooms[ri].items.splice(ii, 1); renderRooms(); renderTotalsBlock(); };
+
+// ── DISCOUNT SYNC ──
+function syncDiscountFields(activeField) {
+  const q = S.currentQuote;
+  const dtype = q.discountType || 'percent';
+  const dval = parseFloat(q.discountValue) || 0;
+  const roundOff = parseFloat(q.roundOff) || 0;
+  let rawTotal = 0;
+  for (const room of (q.rooms || [])) for (const item of (room.items || [])) rawTotal += calcItemAmt(item);
+  const subtotal = rawTotal;
+  const discountAmt = dtype === 'percent' ? Math.round(subtotal * dval / 100) : Math.round(dval);
+  const finalTotal = subtotal - discountAmt + roundOff;
+
+  const leftEl = document.getElementById('discountInput');
+  if (leftEl && activeField !== 'percent') leftEl.value = dval || '';
+
+  const rightEl = document.getElementById('discountConverted');
+  if (rightEl && activeField !== 'amount') {
+    if (dval > 0 || discountAmt > 0) {
+      if (dtype === 'percent') { rightEl.value = discountAmt || ''; rightEl.style.color = 'var(--red)'; }
+      else { rightEl.value = subtotal > 0 ? ((dval/subtotal)*100).toFixed(1) : ''; rightEl.style.color = 'var(--text3)'; }
+    } else { rightEl.value = ''; }
+  }
+
+  const subtotalEl = document.getElementById('discountSubtotal');
+  if (subtotalEl) {
+    subtotalEl.style.display = discountAmt > 0 ? 'flex' : 'none';
+    const sv = subtotalEl.querySelector('.total-val');
+    if (sv) sv.textContent = '₹' + fmtNum(subtotal);
+  }
+
+  const discountRowEl = document.getElementById('discountRow');
+  if (discountRowEl) {
+    discountRowEl.style.display = discountAmt > 0 ? 'flex' : 'none';
+    const dv = discountRowEl.querySelector('.total-val');
+    if (dv) dv.textContent = '-₹' + fmtNum(discountAmt);
+  }
+
+  const grandEl = document.getElementById('discountGrand');
+  if (grandEl) grandEl.textContent = '₹' + fmtNum(finalTotal);
+  const wordsEl = document.getElementById('discountWords');
+  if (wordsEl) wordsEl.textContent = numToWords(finalTotal);
+}
+
+window.setDiscountValue = function(val) {
+  S.currentQuote.discountValue = parseFloat(val) || 0;
+  syncDiscountFields('percent');
+  saveDraft();
+};
+
+window.setDiscountConverted = function(val) {
+  const q = S.currentQuote;
+  const dtype = q.discountType || 'percent';
+  const converted = parseFloat(val) || 0;
+  let rawTotal = 0;
+  for (const room of (q.rooms || [])) for (const item of (room.items || [])) rawTotal += calcItemAmt(item);
+  const subtotal = rawTotal;
+  if (dtype === 'percent') {
+    // Right field shows ₹ amount — back-calculate % and store
+    // Use exact % so that the ₹ amount displayed matches what user typed
+    q.discountValue = subtotal > 0 ? converted / subtotal * 100 : 0;
+    // Override the displayed ₹ amount to be exact (avoid rounding mismatch)
+    // by storing as fixed mode temporarily only for display sync
+    // Keep dtype as 'percent' — don't switch
+  } else {
+    // Right field shows % — back-calculate ₹ and store
+    q.discountValue = subtotal > 0 ? Math.round(subtotal * converted / 100) : 0;
+  }
+  // After updating discountValue, sync but keep right field focused value exact
+  // Manually update just the display elements without touching the active input
+  const discountAmt = dtype === 'percent'
+    ? Math.round(subtotal * q.discountValue / 100)
+    : Math.round(q.discountValue);
+  const finalTotal = subtotal - discountAmt + (parseFloat(q.roundOff) || 0);
+
+  // Update left input (not focused)
+  const leftEl = document.getElementById('discountInput');
+  if (leftEl) leftEl.value = parseFloat(q.discountValue.toFixed(2)) || '';
+
+  // Update discount row label
+  const discountRowEl = document.getElementById('discountRow');
+  if (discountRowEl) {
+    discountRowEl.style.display = discountAmt > 0 ? 'flex' : 'none';
+    const dv = discountRowEl.querySelector('.total-val');
+    if (dv) dv.textContent = '-₹' + fmtNum(discountAmt);
+  }
+  const subtotalEl = document.getElementById('discountSubtotal');
+  if (subtotalEl) subtotalEl.style.display = discountAmt > 0 ? 'flex' : 'none';
+
+  // Update grand total
+  const grandEl = document.getElementById('discountGrand');
+  if (grandEl) grandEl.textContent = '₹' + fmtNum(finalTotal);
+  const wordsEl = document.getElementById('discountWords');
+  if (wordsEl) wordsEl.textContent = numToWords(finalTotal);
+
+  saveDraft();
+};
+
+window.setDiscountType = function(type) {
+  S.currentQuote.discountType = type;
+  S.currentQuote.discountValue = 0;
+  renderTotalsBlock();
+  saveDraft();
+};
+
+window.setRoundOff = function(val) {
+  S.currentQuote.roundOff = parseFloat(val) || 0;
+  syncDiscountFields(null);
+};
+
+window.applyRoundOff = function() {
+  const q = S.currentQuote;
+  const roundOff = parseFloat(q.roundOff) || 0;
+  if (roundOff === 0) return;
+  let rawTotal = 0;
+  for (const room of (q.rooms || [])) for (const item of (room.items || [])) rawTotal += calcItemAmt(item);
+  const subtotal = rawTotal;
+  const dtype = q.discountType || 'percent';
+  const dval = parseFloat(q.discountValue) || 0;
+  const oldDiscountAmt = dtype === 'percent' ? Math.round(subtotal * dval / 100) : Math.round(dval);
+  const newDiscountAmt = Math.max(0, oldDiscountAmt + (-roundOff));
+  // Always store as fixed amount to avoid % rounding errors
+  q.discountType = 'fixed';
+  q.discountValue = newDiscountAmt;
+  q.roundOff = 0;
+  const roundEl = document.getElementById('roundOffInput');
+  if (roundEl) roundEl.value = '';
+  // Full re-render since discountType changed
+  renderTotalsBlock();
+  saveDraft();
+};
+
+window.moveItem = function(ri, ii, dir) {
+  const items = S.currentQuote.rooms[ri].items;
+  const newIdx = ii + dir;
+  if (newIdx < 0 || newIdx >= items.length) return;
+  const temp = items[ii];
+  items[ii] = items[newIdx];
+  items[newIdx] = temp;
+  renderRooms();
+  renderTotalsBlock();
+};
+
+window.toggleTheme = function() {
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('af_theme', isLight ? 'light' : 'dark');
+  const label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+  document.querySelectorAll('#themeBtn').forEach(b => b.textContent = label);
+};
+
+window.toggleSidebar = function() {
+  document.getElementById('appShell').classList.toggle('sidebar-collapsed');
+};
+
+window.onPinKeyboard = function(val) {
+  // Sync keyboard input with pin state
+  const digits = val.replace(/\D/g,'').slice(0,4);
+  S.pinInput = digits;
+  updatePinDots();
+  if (digits.length === 4) {
+    setTimeout(() => {
+      checkPin();
+      document.getElementById('pinKeyboard').value = '';
+    }, 200);
+  }
+};
+
+window.downloadPDF = function() {
+  const q = S.currentQuote;
+  const clientName = (q.client?.name || 'Quote').replace(/[^a-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'_');
+  const quoteNo = (q.quoteNo || 'Quote').replace(/\/\//g,'-').replace(/\//g,'-');
+  const origTitle = document.title;
+  document.title = quoteNo + '_' + clientName;
+  window.print();
+  setTimeout(() => { document.title = origTitle; }, 500);
+};
+window.addItemToRoom = function(ri) {
+  S.currentQuote.rooms[ri].items.push({ particulars: '', l: 0, b: 0, qty: 1, unit: 'SQF', rate: 0 });
+  renderRooms();
+  renderTotalsBlock();
+};
+
+window.toggleSection = function(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.bsh-toggle');
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? 'block' : 'none';
+  icon.classList.toggle('open', hidden);
+};
+
+function calcTotals() {
+  let furniture = 0, pop = 0;
+  const roomTotals = [];
+  for (const room of S.currentQuote.rooms) {
+    const roomTotal = room.items.reduce((s, item) => s + calcItemAmt(item), 0);
+    roomTotals.push({ name: room.name, total: roomTotal, isPOP: room.isPOP });
+    if (room.isPOP) pop += roomTotal;
+    else furniture += roomTotal;
+  }
+  const subtotal = furniture + pop;
+  const q = S.currentQuote;
+  const discountType = q.discountType || 'percent';
+  const discountValue = parseFloat(q.discountValue) || 0;
+  const discountAmt = discountType === 'percent'
+    ? Math.round(subtotal * discountValue / 100)
+    : Math.round(discountValue);
+  const roundOff = parseFloat(q.roundOff) || 0;
+  const grand = subtotal - discountAmt;
+  const finalTotal = grand + roundOff;
+  return { furniture, pop, subtotal, discountAmt, grand, roundOff, finalTotal, roomTotals };
+}
+
+function calcGrandTotal(q) {
+  let total = 0;
+  for (const room of (q.rooms || [])) for (const item of (room.items || [])) total += calcItemAmt(item);
+  const subtotal = total;
+  const discountType = q.discountType || 'percent';
+  const discountValue = parseFloat(q.discountValue) || 0;
+  const discountAmt = discountType === 'percent' ? Math.round(subtotal * discountValue / 100) : Math.round(discountValue);
+  const roundOff = parseFloat(q.roundOff) || 0;
+  return subtotal - discountAmt + roundOff;
+}
+
+function renderTotalsBlock() {
+  const el = document.getElementById('totalsBlock');
+  if (!el) return;
+  const { furniture, pop, subtotal, discountAmt, grand, roundOff, finalTotal, roomTotals } = calcTotals();
+  const q = S.currentQuote;
+  const dtype = q.discountType || 'percent';
+  const dval = q.discountValue || 0;
+
+  const roomRows = roomTotals.filter(r => r.total > 0).map(r =>
+    '<div class="total-row sub" style="font-size:12px;"><span style="color:var(--text3);">' + r.name + '</span><span class="total-val" style="font-size:12px;">₹' + fmtNum(r.total) + '</span></div>'
+  ).join('');
+
+  el.innerHTML = roomRows
+    + (furniture > 0 ? '<div class="total-row sub" style="border-top:1px solid var(--border);margin-top:4px;padding-top:8px;"><span>Furniture Work</span><span class="total-val">₹' + fmtNum(furniture) + '</span></div>' : '')
+    + (pop > 0 ? '<div class="total-row sub"><span>POP & Paint</span><span class="total-val">₹' + fmtNum(pop) + '</span></div>' : '')
+    + '<div class="divider" style="margin:10px 0;"></div>'
+    + '<div id="discountSubtotal" class="total-row sub" style="' + (discountAmt > 0 ? '' : 'display:none;') + '"><span>Sub Total</span><span class="total-val">₹' + fmtNum(subtotal) + '</span></div>'
+    + '<div id="discountRow" class="total-row sub" style="color:var(--red);' + (discountAmt > 0 ? '' : 'display:none;') + '"><span>Discount</span><span class="total-val">-₹' + fmtNum(discountAmt) + '</span></div>'
+    + '<div style="margin-bottom:10px;">'
+    + '<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Discount</div>'
+    + '<div style="display:flex;align-items:center;gap:6px;">'
+    + '<div style="display:flex;background:var(--surface3);border-radius:6px;overflow:hidden;border:1px solid var(--border);">'
+    + '<button onclick="setDiscountType(&quot;percent&quot;)" style="padding:5px 10px;border:none;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;font-weight:600;transition:all 0.15s;background:' + (dtype==='percent'?'var(--gold)':'transparent') + ';color:' + (dtype==='percent'?'#0a1209':'var(--text2)') + ';">%</button>'
+    + '<button onclick="setDiscountType(&quot;fixed&quot;)" style="padding:5px 10px;border:none;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;font-weight:600;transition:all 0.15s;background:' + (dtype==='fixed'?'var(--gold)':'transparent') + ';color:' + (dtype==='fixed'?'#0a1209':'var(--text2)') + ';">₹</button>'
+    + '</div>'
+    + '<input type="number" id="discountInput" value="' + (dval||'') + '" oninput="setDiscountValue(this.value)" placeholder="' + (dtype==='percent'?'%':'₹') + '" min="0"'
+    + (dtype==='percent'?' max="100"':'')
+    + ' style="width:70px;border:1px solid var(--border);border-radius:6px;padding:5px 6px;background:var(--surface2);color:var(--text);font-family:DM Sans,sans-serif;font-size:13px;">'
+    + '<span style="font-size:12px;color:var(--text3);">=</span>'
+    + '<input type="number" id="discountConverted" value="' + (discountAmt > 0 ? (dtype==='percent' ? discountAmt : (subtotal>0?((dval/subtotal)*100).toFixed(1):'')) : '') + '" oninput="setDiscountConverted(this.value)" placeholder="' + (dtype==='percent'?'₹':'%') + '"'
+    + ' style="width:80px;border:1px solid var(--border);border-radius:6px;padding:5px 6px;background:var(--surface2);color:' + (dtype==='percent'?'var(--red)':'var(--text3)') + ';font-family:DM Sans,sans-serif;font-size:13px;">'
+    + '</div>'
+    + '</div>'
+    + '<div style="display:flex;align-items:center;gap:6px;margin:6px 0;">'
+    + '<span style="font-size:11px;font-weight:600;color:var(--text3);flex:1;">Round Off</span>'
+    + '<input type="number" id="roundOffInput" value="' + (roundOff||'') + '" oninput="setRoundOff(this.value)" onblur="applyRoundOff()" placeholder="e.g. -601"'
+    + ' style="width:90px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;background:var(--surface2);color:var(--text);font-family:DM Sans,sans-serif;font-size:12px;text-align:right;" title="Tab to absorb into discount">'
+    + '</div>'
+    + '<div class="total-row grand"><span>Final Total</span><span class="total-val" id="discountGrand">₹' + fmtNum(finalTotal) + '</span></div>'
+    + '<div class="total-words" id="discountWords">' + numToWords(finalTotal) + '</div>';
+}
+
+// ── TEMPLATES ──
+function renderTemplateGrid() {
+  const grid = document.getElementById('templateGrid');
+  if (!grid) return;
+  grid.innerHTML = ROOM_TEMPLATES.map((t, i) => `
+    <button class="template-btn" onclick="addTemplateRoom(${i}); closeModal('templateModal')">
+      <div class="template-btn-name">${t.icon} ${t.name}</div>
+      <div class="template-btn-items">${t.items.map(x => x.particulars).join(', ')}</div>
+    </button>
+  `).join('');
+}
+
+window.addTemplateRoom = function(idx) {
+  const t = ROOM_TEMPLATES[idx];
+  S.currentQuote.rooms.push({
+    name: t.name,
+    isPOP: t.name.toLowerCase().includes('pop'),
+    items: JSON.parse(JSON.stringify(t.items))
+  });
+  renderRooms();
+  renderTotalsBlock();
+};
+
+window.addBlankRoom = function() {
+  S.currentQuote.rooms.push({ name: 'New Room', isPOP: false, items: [] });
+  renderRooms();
+};
+
+// ── TC BUILDER ──
+function renderTCBuilder() {
+  const el = document.getElementById('tcBuilderList');
+  if (!el) return;
+  const tc = S.currentQuote.tc || [];
+  el.innerHTML = tc.map((section, i) => `
+    <div class="tc-item">
+      <div class="tc-item-header">
+        <input class="form-input" value="${section.title.replace(/"/g,'&quot;')}" oninput="updateTC(${i},'title',this.value)" style="font-weight:600;background:var(--surface2);color:var(--text);">
+        <button class="btn btn-danger btn-sm btn-icon" onclick="removeTC(${i})">✕</button>
+      </div>
+      <textarea class="form-input form-textarea" rows="5" oninput="updateTC(${i},'content',this.value)" style="background:var(--surface2);color:var(--text);resize:vertical;">${section.content}</textarea>
+    </div>
+  `).join('');
+}
+
+window.updateTC = function(i, field, val) { S.currentQuote.tc[i][field] = val; };
+window.removeTC = function(i) { S.currentQuote.tc.splice(i, 1); renderTCBuilder(); };
+
+// ── SAVE QUOTE ──
+window.saveQuote = async function() {
+  collectBuilderData();
+  const q = S.currentQuote;
+  if (!q.client.name) { toast('Please enter client name'); return; }
+  // Collect TC from DOM in case onchange didn't fire
+  const tcEls = document.querySelectorAll('#tcBuilderList .tc-item');
+  tcEls.forEach((el, i) => {
+    if (q.tc && q.tc[i]) {
+      const titleEl = el.querySelector('input');
+      const contentEl = el.querySelector('textarea');
+      if (titleEl) q.tc[i].title = titleEl.value;
+      if (contentEl) q.tc[i].content = contentEl.value;
+    }
+  });
+  // Deep sanitize - Firestore rejects undefined values
+  const cleanTC = (q.tc || S.tcMaster || []).map(s => ({
+    title: String(s.title || ''),
+    content: String(s.content || '')
+  }));
+  const cleanRooms = (q.rooms || []).map(r => ({
+    name: String(r.name || ''),
+    isPOP: Boolean(r.isPOP),
+    items: (r.items || []).map(item => ({
+      particulars: String(item.particulars || ''),
+      l: parseFloat(item.l) || 0,
+      b: parseFloat(item.b) || 0,
+      qty: parseFloat(item.qty) || 1,
+      unit: String(item.unit || 'SQF'),
+      rate: parseFloat(item.rate) || 0
+    }))
+  }));
+  try {
+    const data = {
+      quoteNo: String(q.quoteNo || ''),
+      date: String(q.date || ''),
+      validity: String(q.validity || ''),
+      status: String(q.status || 'draft'),
+      client: {
+        name: String(q.client.name || ''),
+        phone: String(q.client.phone || ''),
+        address: String(q.client.address || '')
+      },
+      rooms: cleanRooms,
+      notes: String(q.notes || ''),
+      tc: cleanTC,
+      discountType: String(q.discountType || 'percent'),
+      discountValue: parseFloat(q.discountValue) || 0,
+      roundOff: parseFloat(q.roundOff) || 0,
+      updatedAt: serverTimestamp()
+    };
+    if (q.id) {
+      await updateDoc(doc(db, 'quotes', q.id), data);
+    } else {
+      data.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(db, 'quotes'), data);
+      S.currentQuote.id = ref.id;
+      saveClient(q.client);
+    }
+    await loadQuotes();
+    clearDraft();
+    stopAutoSave();
+    toast('Quote saved ✓');
+  } catch(e) { console.error(e); toast('Error saving: ' + e.message); }
+};
+
+function collectBuilderData() {
+  const q = S.currentQuote;
+  q.client.name = document.getElementById('clientName')?.value || q.client.name;
+  q.client.phone = document.getElementById('clientPhone')?.value || q.client.phone;
+  q.client.address = document.getElementById('clientAddress')?.value || q.client.address;
+  q.quoteNo = document.getElementById('quoteNo')?.value || q.quoteNo;
+  q.date = document.getElementById('quoteDate')?.value || q.date;
+  q.validity = document.getElementById('quoteValidity')?.value || q.validity;
+  q.notes = document.getElementById('quoteNotes')?.value || '';
+  saveDraft();
+}
+
+// ── CLIENTS ──
+async function saveClient(client) {
+  if (!client.name) return;
+  try {
+    const id = client.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    await setDoc(doc(db, 'clients', id), { ...client, updatedAt: serverTimestamp() }, { merge: true });
+  } catch(e) {}
+}
+
+async function loadClients() {
+  try {
+    const snap = await getDocs(collection(db, 'clients'));
+    S.clients = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {}
+}
+
+window.showClientsModal = async function(forBuilder = false) {
+  await loadClients();
+  renderClientsList(S.clients, forBuilder);
+  openModal('clientsModal');
+};
+
+function renderClientsList(clients, forBuilder) {
+  const el = document.getElementById('clientsList');
+  if (!clients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">No saved clients yet</div></div>';
+    return;
+  }
+  el.innerHTML = clients.map(c => `
+    <div class="client-item" onclick="${forBuilder ? `loadClientToBuilder('${c.id}')` : `openClientQuotes('${c.name}')`}">
+      <div class="client-item-name">${c.name}</div>
+      <div class="client-item-meta">${c.phone || ''} ${c.address ? '· ' + c.address : ''}</div>
+    </div>
+  `).join('');
+}
+
+window.filterClients = function() {
+  const q = document.getElementById('clientSearch').value.toLowerCase();
+  const filtered = S.clients.filter(c => (c.name || '').toLowerCase().includes(q));
+  renderClientsList(filtered, false);
+};
+
+window.loadClientToBuilder = function(id) {
+  const client = S.clients.find(c => c.id === id);
+  if (!client) return;
+  document.getElementById('clientName').value = client.name || '';
+  document.getElementById('clientPhone').value = client.phone || '';
+  document.getElementById('clientAddress').value = client.address || '';
+  S.currentQuote.client = { ...client };
+  closeModal('clientsModal');
+  toast('Client loaded');
+};
+
+// ── PREVIEW ──
+window.openPreview = function(id) {
+  const q = S.quotes.find(x => x.id === id);
+  if (!q) return;
+  S.currentQuote = JSON.parse(JSON.stringify(q));
+  renderPreview();
+  showScreen('preview');
+};
+
+window.previewFromBuilder = function() {
+  collectBuilderData();
+  renderPreview();
+  showScreen('preview');
+};
+
+function renderPreview() {
+  const q = S.currentQuote;
+  const { furniture, pop, subtotal, discountAmt, grand, roundOff, finalTotal } = calcTotals();
+  let srNo = 1;
+  let roomRows = '';
+
+  for (const room of q.rooms) {
+    if (!room.items.length) continue;
+    const roomTotal = room.items.reduce((s, item) => s + calcItemAmt(item), 0);
+    roomRows += '<tr class="preview-room-header"><td colspan="9">' + room.name + '</td></tr>';
+    for (const item of room.items) {
+      const area = calcArea(item);
+      const amt = calcItemAmt(item);
+      roomRows += '<tr>'
+        + '<td class="num">' + srNo++ + '</td>'
+        + '<td>' + item.particulars + '</td>'
+        + '<td class="num">' + (item.l || '—') + '</td>'
+        + '<td class="num">' + (item.b || '—') + '</td>'
+        + '<td class="num">' + item.qty + '</td>'
+        + '<td class="num">' + item.unit + '</td>'
+        + '<td class="num">' + (area > 0 ? area.toFixed(2) : '—') + '</td>'
+        + '<td class="num">' + fmtNum(parseFloat(item.rate)||0) + '</td>'
+        + '<td class="num">₹' + fmtNum(amt) + '</td>'
+        + '</tr>';
+    }
+    roomRows += '<tr style="background:#f5f2ee !important;">'
+      + '<td colspan="8" style="text-align:right;font-size:11px;color:#888;font-style:italic;padding-right:12px;">' + room.name + ' Total</td>'
+      + '<td class="num" style="font-weight:600;color:#92400e;">₹' + fmtNum(roomTotal) + '</td>'
+      + '</tr>';
+  }
+
+  const tcHTML = (q.tc || S.tcMaster).map(s => `
+    <div class="preview-tc-section">
+      <h4>${s.title}</h4>
+      <div style="font-size:11px;color:var(--text2);white-space:pre-line;line-height:1.7;">${s.content}</div>
+    </div>
+  `).join('');
+
+  const html = `
+    <div class="preview-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="preview-company">${S.company.name}</div>
+          <div class="preview-company-sub">${S.company.contact} · ${S.company.phone}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;font-size:16px;color:var(--accent);">ESTIMATE</div>
+          <div style="font-size:12px;color:var(--text2);">${q.quoteNo}</div>
+        </div>
+      </div>
+      <div class="preview-meta" style="margin-top:12px;">
+        <div><strong>Client:</strong> ${q.client.name}</div>
+        <div><strong>Date:</strong> ${formatDate(q.date)}</div>
+        <div><strong>Site:</strong> ${q.client.address || '—'}</div>
+        <div><strong>Valid Until:</strong> ${formatDate(q.validity)}</div>
+        ${q.client.phone ? `<div><strong>Phone:</strong> ${q.client.phone}</div>` : ''}
+      </div>
+    </div>
+
+    <table class="preview-table">
+      <thead>
+        <tr>
+          <th class="num">Sr.</th>
+          <th>Particulars</th>
+          <th class="num">L (ft)</th>
+          <th class="num">B (ft)</th>
+          <th class="num">Qty</th>
+          <th class="num">Unit</th>
+          <th class="num">Area</th>
+          <th class="num">Rate</th>
+          <th class="num">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${roomRows}
+        ${furniture > 0 ? `<tr class="preview-subtotal"><td colspan="8">Furniture Work Total</td><td class="num">₹${fmtNum(furniture)}</td></tr>` : ''}
+        ${pop > 0 ? `<tr class="preview-subtotal"><td colspan="8">POP, Paint & Misc Total</td><td class="num">₹${fmtNum(pop)}</td></tr>` : ''}
+        ${discountAmt > 0 ? `<tr class="preview-subtotal"><td colspan="8">Sub Total</td><td class="num">₹${fmtNum(subtotal)}</td></tr>` : ''}
+        ${discountAmt > 0 ? `<tr class="preview-subtotal" style="color:#dc2626;"><td colspan="8">Discount (${q.discountType==='percent' ? q.discountValue+'%' : '₹'+fmtNum(q.discountValue)})</td><td class="num" style="color:#dc2626;">-₹${fmtNum(discountAmt)}</td></tr>` : ''}
+        <tr class="preview-grand"><td colspan="8">Final Total</td><td class="num">₹${fmtNum(finalTotal)}</td></tr>
+      </tbody>
+    </table>
+
+    <div class="preview-words"><strong>Amount in Words:</strong> ${numToWords(finalTotal)}</div>
+
+    ${q.notes ? `<div style="font-size:12px;color:var(--text2);margin-bottom:12px;"><strong>Notes:</strong> ${q.notes}</div>` : ''}
+
+    <div class="preview-tc">
+      <div class="preview-tc-title">${S.company.name} — Standard Terms & Conditions</div>
+      ${tcHTML}
+    </div>
+
+    <div class="preview-sign">
+      <div class="preview-sign-box">
+        <div class="preview-sign-line"></div>
+        <div>Client Signature</div>
+        <div style="margin-top:4px;">Date: _______________</div>
+      </div>
+      <div class="preview-sign-box">
+        <div class="preview-sign-line"></div>
+        <div>${S.company.name}</div>
+        <div style="margin-top:4px;">${S.company.contact}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('previewSheet').innerHTML = html;
+}
+
+window.printQuote = function() { window.print(); };
+
+window.shareWhatsApp = function() {
+  const q = S.currentQuote;
+  const { grand } = calcTotals();
+  const lines = [
+    '*ESTIMATE — ' + S.company.name + '*',
+    '',
+    'Client: ' + q.client.name,
+    'Quote No: ' + q.quoteNo,
+    'Date: ' + formatDate(q.date),
+    'Valid Until: ' + formatDate(q.validity),
+    '',
+    '*Grand Total: ₹' + fmtNum(grand) + '*',
+    numToWords(grand),
+    '',
+    'Payment: 50% advance, 20% hardware, 20% laminate, 10% on completion',
+    '',
+    '_' + S.company.contact + ' · ' + S.company.phone + '_'
+  ];
+  const text = lines.join('\n');
+  const phone = (q.client.phone || '').replace(/[^0-9]/g, '');
+  const url = phone
+    ? 'https://wa.me/91' + phone + '?text=' + encodeURIComponent(text)
+    : 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+  toast('WhatsApp opened ✓  Use Download PDF to attach the quote PDF');
+};
+
+window.copyShareText = function() {
+  const q = S.currentQuote;
+  const { grand } = calcTotals();
+  const text = `ESTIMATE — ${S.company.name}\nClient: ${q.client.name}\nQuote No: ${q.quoteNo}\nDate: ${formatDate(q.date)}\nGrand Total: ₹${fmtNum(grand)}\n${numToWords(grand)}`;
+  navigator.clipboard.writeText(text).then(() => toast('Summary copied!')).catch(() => toast('Copy failed'));
+};
+
+// ── SETTINGS ──
+function renderSettings() {
+  renderRateMaster();
+  renderTCMaster();
+  const co = S.company;
+  document.getElementById('setCompanyName').value = co.name || '';
+  document.getElementById('setContactName').value = co.contact || '';
+  document.getElementById('setPhone').value = co.phone || '';
+  document.getElementById('setPrefix').value = co.prefix || 'AFW';
+  // Sync theme button label
+  const isLight = document.body.classList.contains('light');
+  document.querySelectorAll('#themeBtn').forEach(b => {
+    b.textContent = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+  });
+}
+
+function renderRateMaster() {
+  const el = document.getElementById('rateMasterList');
+  if (!el) return;
+  el.innerHTML = S.rateMaster.map((r, i) => `
+    <div class="rate-item">
+      <div style="flex:1">
+        <input class="form-input" value="${r.name}" onchange="updateRate(${i},'name',this.value)" style="margin-bottom:4px;padding:6px 8px;">
+        <select class="form-select" onchange="updateRate(${i},'unit',this.value)" style="padding:4px 8px;width:80px;">
+          ${['SQF','RF','LS','NOS'].map(u => `<option ${r.unit===u?'selected':''}>${u}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <input class="rate-item-input" type="number" value="${r.rate}" onchange="updateRate(${i},'rate',this.value)">
+        <div class="rate-updated" style="font-size:10px;color:var(--text3);margin-top:2px;">${r.updated ? new Date(r.updated).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'}) : ''}</div>
+      </div>
+      <button class="btn btn-danger btn-icon btn-sm" onclick="removeRate(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+window.updateRate = function(i, field, val) {
+  S.rateMaster[i][field] = field === 'rate' ? parseFloat(val) : val;
+  if (field === 'rate') S.rateMaster[i].updated = new Date().toISOString();
+};
+window.removeRate = function(i) { S.rateMaster.splice(i, 1); renderRateMaster(); };
+window.addRateItem = function() {
+  S.rateMaster.push({ name: 'New Item', unit: 'SQF', rate: 0, updated: new Date().toISOString() });
+  renderRateMaster();
+};
+
+function renderTCMaster() {
+  const el = document.getElementById('tcMasterList');
+  if (!el) return;
+  el.innerHTML = S.tcMaster.map((s, i) => `
+    <div class="tc-item">
+      <div class="tc-item-header">
+        <input class="form-input" value="${s.title}" onchange="updateTCMaster(${i},'title',this.value)" style="font-weight:600;">
+        <button class="btn btn-danger btn-sm btn-icon" onclick="removeTCSection(${i})">✕</button>
+      </div>
+      <textarea class="form-input form-textarea" rows="4" onchange="updateTCMaster(${i},'content',this.value)">${s.content}</textarea>
+    </div>
+  `).join('');
+}
+
+window.updateTCMaster = function(i, field, val) { S.tcMaster[i][field] = val; };
+window.removeTCSection = function(i) { S.tcMaster.splice(i, 1); renderTCMaster(); };
+window.addTCSection = function() {
+  S.tcMaster.push({ title: 'New Section', content: '' });
+  renderTCMaster();
+};
+
+window.saveCompanyDetails = async function() {
+  S.company = {
+    name: document.getElementById('setCompanyName').value,
+    contact: document.getElementById('setContactName').value,
+    phone: document.getElementById('setPhone').value,
+    prefix: document.getElementById('setPrefix').value
+  };
+  await saveSettings();
+  toast('Settings saved ✓');
+};
+
+window.changePin = function() {
+  const old = document.getElementById('oldPin').value;
+  const newP = document.getElementById('newPin').value;
+  const stored = localStorage.getItem('af_pin') || '1234';
+  if (old !== stored) { toast('Current PIN incorrect'); return; }
+  if (newP.length !== 4) { toast('New PIN must be 4 digits'); return; }
+  localStorage.setItem('af_pin', newP);
+  document.getElementById('oldPin').value = '';
+  document.getElementById('newPin').value = '';
+  toast('PIN changed ✓');
+};
+
+// Save settings when navigating away from settings
+document.getElementById('snav-dash') && document.getElementById('snav-dash').addEventListener('click', () => {
+  if (document.getElementById('settingsScreen').classList.contains('active')) {
+    saveSettings();
+  }
+});
+
+// ── MODAL HELPERS ──
+window.openModal = function(id) { document.getElementById(id).classList.add('open'); };
+window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── TOAST ──
+window.toast = function(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+};
+
+// ── HELPERS ──
+function fmtNum(n) {
+  if (!n) return '0';
+  return Math.round(n).toLocaleString('en-IN');
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  catch(e) { return d; }
+}
+
+function numToWords(n) {
+  if (!n) return 'Zero Rupees Only';
+  n = Math.round(n);
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function conv(num) {
+    if (num === 0) return '';
+    if (num < 20) return ones[num] + ' ';
+    if (num < 100) return tens[Math.floor(num/10)] + (num%10 ? ' ' + ones[num%10] : '') + ' ';
+    if (num < 1000) return ones[Math.floor(num/100)] + ' Hundred ' + conv(num%100);
+    if (num < 100000) return conv(Math.floor(num/1000)) + 'Thousand ' + conv(num%1000);
+    if (num < 10000000) return conv(Math.floor(num/100000)) + 'Lakh ' + conv(num%100000);
+    return conv(Math.floor(num/10000000)) + 'Crore ' + conv(num%10000000);
+  }
+  return conv(n).trim() + ' Rupees Only';
+}
+
+window.openClientQuotes = function(name) {
+  closeModal('clientsModal');
+  document.getElementById('searchInput').value = name;
+  filterQuotes();
+  showScreen('dash');
+};
+
+</script>
+</body>
+</html>
