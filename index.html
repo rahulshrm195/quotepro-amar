@@ -865,6 +865,9 @@ body {
       <button class="snav-item active" id="snav-dash" onclick="showScreen('dash')">
         <span class="snav-icon">🏠</span> Quotes
       </button>
+      <button class="snav-item" id="snav-po" onclick="showScreen('po')">
+        <span class="snav-icon">📦</span> Purchase Orders
+      </button>
       <button class="snav-item" id="snav-clients" onclick="showClientsModal()">
         <span class="snav-icon">👥</span> Clients
       </button>
@@ -984,6 +987,12 @@ body {
         </div>
         <div class="divider"></div>
         <div class="settings-section">
+          <div class="settings-title">🏪 Vendor Master</div>
+          <p class="form-hint" style="margin-bottom:12px;">Add vendors you buy materials from. Used in Purchase Orders.</p>
+          <div id="vendorMasterList"></div>
+          <button class="btn btn-secondary btn-sm" onclick="addVendor()" style="margin-top:10px;">+ Add Vendor</button>
+        </div>
+        <div class="settings-section">
           <div class="settings-title">📋 Terms & Conditions Master</div>
           <p class="form-hint" style="margin-bottom:12px;">New quotes use these T&C. Existing quotes keep their own copy.</p>
           <div id="tcMasterList"></div>
@@ -992,10 +1001,37 @@ body {
       </div>
     </div>
 
+    <!-- PO SCREEN -->
+    <div id="poScreen" class="screen">
+      <div class="main">
+        <div class="dash-header">
+          <div class="dash-title">Purchase <span>Orders</span></div>
+          <button class="btn btn-primary" onclick="newPO()">+ New PO</button>
+        </div>
+        <div class="quotes-grid" id="poList"></div>
+      </div>
+    </div>
+
+    <!-- PO BUILDER SCREEN -->
+    <div id="poBuilderScreen" class="screen">
+      <div class="main" id="poBuilderMain"></div>
+    </div>
+
+    <!-- PO PREVIEW SCREEN -->
+    <div id="poPreviewScreen" class="screen">
+      <div id="poPreviewActions" class="preview-actions"></div>
+      <div class="main" style="padding-top:16px;">
+        <div id="poPreviewSheet"></div>
+      </div>
+    </div>
+
     <!-- MOBILE BOTTOM NAV -->
     <div class="bottomnav">
       <button class="bnav-item active" id="bnav-dash" onclick="showScreen('dash')">
         <span class="bnav-icon">🏠</span>Quotes
+      </button>
+      <button class="bnav-item" id="bnav-po" onclick="showScreen('po')">
+        <span class="bnav-icon">📦</span>POs
       </button>
       <button class="bnav-item" id="bnav-clients" onclick="showClientsModal()">
         <span class="bnav-icon">👥</span>Clients
@@ -1148,8 +1184,11 @@ window.doSignOut = async function() {
 // ── STATE ──
 window._state = {
   currentQuote: null,
+  currentPO: null,
   quotes: [],
   clients: [],
+  vendors: [],
+  purchaseOrders: [],
   rateMaster: [],
   tcMaster: [],
   company: { name: 'Amar Furniture', contact: 'Rahul Sharma', phone: '8275407603', prefix: 'AFW' },
@@ -1160,6 +1199,11 @@ window._state = {
 const S = window._state;
 
 // ── DEFAULTS ──
+const DEFAULT_VENDORS = [
+  { name: 'Novus Plywood', phone: '', supplies: 'Plywood' },
+  { name: 'Shubham Hardware', phone: '', supplies: 'Hardware' },
+  { name: 'Balaji Laminates', phone: '', supplies: 'Laminates' },
+];
 const DEFAULT_RATES = [
   { name: 'TV Unit', unit: 'SQF', rate: 1100, updated: new Date().toISOString() },
   { name: 'Mandir', unit: 'SQF', rate: 1250, updated: new Date().toISOString() },
@@ -1703,12 +1747,15 @@ async function loadSettings() {
       if (d.rateMaster) S.rateMaster = d.rateMaster;
       if (d.tcMaster) S.tcMaster = d.tcMaster;
       if (d.company) S.company = { ...S.company, ...d.company };
+      if (d.vendors) S.vendors = d.vendors;
+      else { S.vendors = DEFAULT_VENDORS; await saveSettings(); }
     } else {
       S.rateMaster = DEFAULT_RATES;
       S.tcMaster = DEFAULT_TC;
+      S.vendors = DEFAULT_VENDORS;
       await saveSettings();
     }
-  } catch(e) { S.rateMaster = DEFAULT_RATES; S.tcMaster = DEFAULT_TC; }
+  } catch(e) { S.rateMaster = DEFAULT_RATES; S.tcMaster = DEFAULT_TC; S.vendors = DEFAULT_VENDORS; }
 }
 
 async function saveSettings() {
@@ -1716,7 +1763,8 @@ async function saveSettings() {
     await setDoc(doc(db, 'settings', 'main'), {
       rateMaster: S.rateMaster,
       tcMaster: S.tcMaster,
-      company: S.company
+      company: S.company,
+      vendors: S.vendors
     });
   } catch(e) { console.error(e); }
 }
@@ -1807,6 +1855,7 @@ function renderQuotesList(quotes) {
         <button class="btn btn-secondary btn-sm" onclick="openPreview('${q.id}')">👁 Preview</button>
         <button class="btn btn-secondary btn-sm" onclick="openQuote('${q.id}')">✎ Edit</button>
         <button class="btn btn-secondary btn-sm" onclick="duplicateQuote('${q.id}')">📋 Duplicate</button>
+        <button class="btn btn-secondary btn-sm" onclick="createPOFromQuote('${q.id}')">📦 PO</button>
         <button class="btn btn-secondary btn-sm" onclick="openStatusModal('${q.id}')">📌 Status</button>
         <button class="btn btn-danger btn-sm" onclick="deleteQuote('${q.id}')">🗑</button>
       </div>
@@ -1825,7 +1874,6 @@ window.filterQuotes = function() {
 
 // ── SCREENS ──
 window.showScreen = function(name, trackHistory) {
-  // Track navigation history (default true unless explicitly false)
   if (trackHistory !== false) {
     const current = document.querySelector('.screen.active')?.id?.replace('Screen','');
     if (current && current !== name) S.navHistory.push(current);
@@ -1833,20 +1881,22 @@ window.showScreen = function(name, trackHistory) {
   }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(name + 'Screen').classList.add('active');
-  // sidebar nav
   document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
   const sItem = document.getElementById('snav-' + name);
   if (sItem) sItem.classList.add('active');
-  // mobile bottom nav
   document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
   const bItem = document.getElementById('bnav-' + name);
   if (bItem) bItem.classList.add('active');
-  // back button
   const backBtn = document.getElementById('backBtn');
-  backBtn.classList.toggle('visible', name !== 'dash' && name !== 'settings');
-  // topbar title
-  const titles = { dash: 'Quotes', builder: 'Quote Builder', preview: 'Quote Preview', settings: 'Settings' };
+  backBtn.classList.toggle('visible', !['dash','settings','po'].includes(name));
+  const titles = {
+    dash: 'Quotes', builder: 'Quote Builder', preview: 'Quote Preview',
+    settings: 'Settings', po: 'Purchase Orders',
+    poBuilder: 'New Purchase Order', poPreview: 'PO Preview'
+  };
   document.getElementById('topbarTitle').textContent = titles[name] || '';
+  if (name === 'po') { loadPurchaseOrders().then(renderPOList); }
+  if (name === 'settings') { renderSettings(); }
 };
 
 window.goBack = function() {
@@ -1861,6 +1911,11 @@ window.goBack = function() {
   } else if (prev === 'preview') {
     renderPreview();
     showScreen('preview', false);
+  } else if (prev === 'poBuilder') {
+    renderPOBuilder();
+    showScreen('poBuilder', false);
+  } else if (prev === 'po') {
+    showScreen('po', false);
   } else {
     S.viewMode = false;
     stopAutoSave();
@@ -2821,17 +2876,49 @@ window.copyShareText = function() {
 function renderSettings() {
   renderRateMaster();
   renderTCMaster();
+  renderVendorMaster();
   const co = S.company;
   document.getElementById('setCompanyName').value = co.name || '';
   document.getElementById('setContactName').value = co.contact || '';
   document.getElementById('setPhone').value = co.phone || '';
   document.getElementById('setPrefix').value = co.prefix || 'AFW';
-  // Sync theme button label
   const isLight = document.body.classList.contains('light');
   document.querySelectorAll('#themeBtn').forEach(b => {
     b.textContent = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
   });
 }
+
+function renderVendorMaster() {
+  const el = document.getElementById('vendorMasterList');
+  if (!el) return;
+  if (!S.vendors.length) {
+    el.innerHTML = '<div class="form-hint">No vendors yet. Add your first vendor.</div>';
+    return;
+  }
+  el.innerHTML = S.vendors.map((v, i) => `
+    <div class="rate-item">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <input class="form-input" value="${v.name}" oninput="updateVendor(${i},'name',this.value)" placeholder="Vendor name" style="padding:6px 8px;">
+        <input class="form-input" value="${v.phone}" oninput="updateVendor(${i},'phone',this.value)" placeholder="Phone" style="padding:6px 8px;">
+        <input class="form-input" value="${v.supplies}" oninput="updateVendor(${i},'supplies',this.value)" placeholder="Supplies (Plywood etc)" style="padding:6px 8px;">
+      </div>
+      <button class="btn btn-danger btn-icon btn-sm" onclick="removeVendor(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+window.updateVendor = function(i, field, val) {
+  S.vendors[i][field] = val;
+};
+window.removeVendor = function(i) {
+  S.vendors.splice(i, 1);
+  renderVendorMaster();
+};
+window.addVendor = function() {
+  S.vendors.push({ name: '', phone: '', supplies: '' });
+  renderVendorMaster();
+  saveSettings();
+};
 
 function renderRateMaster() {
   const el = document.getElementById('rateMasterList');
@@ -2935,6 +3022,389 @@ function maybeShowWhatsNew() {
     try { localStorage.setItem(VERSION_KEY, APP_VERSION); } catch(e) {}
   }
 }
+
+// ── PURCHASE ORDERS ──
+async function getNextPONumber() {
+  try {
+    const snap = await getDoc(doc(db, 'meta', 'poCounter'));
+    const last = snap.exists() ? (snap.data().last || 0) : 0;
+    const next = last + 1;
+    const year = new Date().getFullYear();
+    await setDoc(doc(db, 'meta', 'poCounter'), { last: next });
+    return 'PO/' + String(next).padStart(3,'0') + '/' + year;
+  } catch(e) { return 'PO/' + Date.now(); }
+}
+
+async function loadPurchaseOrders() {
+  try {
+    const q = query(collection(db, 'purchaseOrders'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    S.purchaseOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) { console.error(e); }
+}
+
+function renderPOList() {
+  const el = document.getElementById('poList');
+  if (!el) return;
+  if (!S.purchaseOrders.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-text">No purchase orders yet</div><button class="btn btn-primary" onclick="newPO()">+ New PO</button></div>';
+    return;
+  }
+  el.innerHTML = S.purchaseOrders.map(po => {
+    const total = (po.items || []).reduce((s, i) => s + (parseFloat(i.qty)||0) * (parseFloat(i.rate)||0), 0);
+    const vendors = [...new Set((po.items||[]).map(i => i.vendor).filter(Boolean))];
+    const badge = po.status === 'sent' ? 'badge-sent' : 'badge-draft';
+    const label = po.status === 'sent' ? '↗ Sent' : '✎ Draft';
+    return '<div class="quote-card">'
+      + '<div>'
+      + '<div class="qc-top">'
+      + '<div><div class="qc-name">' + (po.poNo || '—') + '</div>'
+      + '<div class="qc-num">' + (po.linkedQuote ? 'Linked: ' + po.linkedQuote : 'Standalone') + '</div></div>'
+      + '<div class="qc-amount"><div class="qc-amount-val">₹' + fmtNum(total) + '</div><small>' + (po.date || '') + '</small></div>'
+      + '</div>'
+      + '<div class="qc-bottom"><span class="badge ' + badge + '">' + label + '</span>'
+      + '<div class="qc-meta">' + vendors.join(', ') + '</div></div>'
+      + '</div>'
+      + '<div class="qc-actions" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;">'
+      + '<button class="btn btn-secondary btn-sm" onclick="openPOPreview(&quot;' + po.id + '&quot;)">👁 Preview</button>'
+      + '<button class="btn btn-secondary btn-sm" onclick="editPO(&quot;' + po.id + '&quot;)">✎ Edit</button>'
+      + '<button class="btn btn-secondary btn-sm" onclick="setPOStatus(&quot;' + po.id + '&quot;,&quot;sent&quot;)">📤 Mark Sent</button>'
+      + '<button class="btn btn-danger btn-sm" onclick="deletePO(&quot;' + po.id + '&quot;)">🗑</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+window.createPOFromQuote = async function(quoteId) {
+  const q = S.quotes.find(x => x.id === quoteId);
+  if (!q) return;
+  const poNo = await getNextPONumber();
+  const today = new Date().toISOString().slice(0,10);
+  // Pre-populate with a blank item per room as starting point
+  const items = [{ material: 'Plywood 18mm BWR', qty: 0, unit: 'Sheets', rate: 0, vendor: S.vendors[0]?.name || '' }];
+  S.currentPO = {
+    id: null, poNo, date: today,
+    linkedQuote: q.quoteNo,
+    linkedQuoteId: quoteId,
+    notes: 'For ' + (q.client?.name || '') + ' — ' + (q.client?.address || ''),
+    status: 'draft',
+    items
+  };
+  renderPOBuilder();
+  showScreen('poBuilder');
+  toast('PO created from ' + q.quoteNo + ' — add your materials');
+};
+
+window.newPO = async function() {
+  const poNo = await getNextPONumber();
+  const today = new Date().toISOString().slice(0,10);
+  S.currentPO = {
+    id: null, poNo, date: today,
+    linkedQuote: '', linkedQuoteId: '',
+    notes: '',
+    status: 'draft',
+    items: [{ material: '', qty: 1, unit: 'Sheets', rate: 0, vendor: S.vendors[0]?.name || '' }]
+  };
+  renderPOBuilder();
+  showScreen('poBuilder');
+};
+
+window.editPO = function(id) {
+  const po = S.purchaseOrders.find(p => p.id === id);
+  if (!po) return;
+  S.currentPO = JSON.parse(JSON.stringify(po));
+  renderPOBuilder();
+  showScreen('poBuilder');
+};
+
+window.deletePO = async function(id) {
+  if (!confirm('Delete this PO?')) return;
+  try {
+    await deleteDoc(doc(db, 'purchaseOrders', id));
+    S.purchaseOrders = S.purchaseOrders.filter(p => p.id !== id);
+    renderPOList();
+    toast('PO deleted');
+  } catch(e) { toast('Error deleting PO'); }
+};
+
+window.setPOStatus = async function(id, status) {
+  try {
+    await updateDoc(doc(db, 'purchaseOrders', id), { status, updatedAt: serverTimestamp() });
+    const po = S.purchaseOrders.find(p => p.id === id);
+    if (po) po.status = status;
+    renderPOList();
+    toast('Status updated');
+  } catch(e) { toast('Error'); }
+};
+
+window.savePO = async function() {
+  collectPOData();
+  const po = S.currentPO;
+  if (!po.items.length) { toast('Add at least one item'); return; }
+  try {
+    const data = {
+      poNo: po.poNo, date: po.date,
+      linkedQuote: po.linkedQuote || '',
+      linkedQuoteId: po.linkedQuoteId || '',
+      notes: po.notes || '',
+      status: po.status || 'draft',
+      items: po.items.map(i => ({
+        material: String(i.material||''), qty: parseFloat(i.qty)||0,
+        unit: String(i.unit||'Sheets'), rate: parseFloat(i.rate)||0,
+        vendor: String(i.vendor||'')
+      })),
+      updatedAt: serverTimestamp()
+    };
+    if (po.id) {
+      await updateDoc(doc(db, 'purchaseOrders', po.id), data);
+    } else {
+      data.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(db, 'purchaseOrders'), data);
+      S.currentPO.id = ref.id;
+    }
+    await loadPurchaseOrders();
+    toast('PO saved ✓');
+  } catch(e) { console.error(e); toast('Error saving PO: ' + e.message); }
+};
+
+function collectPOData() {
+  const po = S.currentPO;
+  po.linkedQuote = document.getElementById('poLinkedQuote')?.value || '';
+  po.date = document.getElementById('poDate')?.value || po.date;
+  po.notes = document.getElementById('poNotes')?.value || '';
+}
+
+function renderPOBuilder() {
+  const po = S.currentPO;
+  const vendorOptions = S.vendors.map(v => '<option value="' + v.name + '">' + v.name + ' (' + v.supplies + ')</option>').join('');
+  const quoteOptions = '<option value="">None (Standalone)</option>'
+    + S.quotes.map(q => '<option value="' + q.quoteNo + '" data-id="' + q.id + '">' + q.quoteNo + ' — ' + (q.client?.name||'') + '</option>').join('');
+
+  const html = '<div class="builder-layout">'
+    + '<div class="builder-main">'
+    + '<div class="builder-section">'
+    + '<div class="builder-section-header" onclick="toggleSection(this)">'
+    + '<span class="bsh-title">📋 PO Details</span><span class="bsh-toggle open">▾</span></div>'
+    + '<div class="builder-section-body">'
+    + '<div class="form-row">'
+    + '<div class="form-group"><label class="form-label">PO Number</label>'
+    + '<input class="form-input" value="' + po.poNo + '" readonly style="opacity:0.7;"></div>'
+    + '<div class="form-group"><label class="form-label">Date</label>'
+    + '<input class="form-input" type="date" id="poDate" value="' + po.date + '"></div>'
+    + '</div>'
+    + '<div class="form-group"><label class="form-label">Linked Quote (optional)</label>'
+    + '<select class="form-select" id="poLinkedQuote" onchange="onPOQuoteChange(this)">' + quoteOptions + '</select></div>'
+    + '</div></div>'
+    + '<div class="builder-section">'
+    + '<div class="builder-section-header" onclick="toggleSection(this)">'
+    + '<span class="bsh-title">📦 Materials</span><span class="bsh-toggle open">▾</span></div>'
+    + '<div class="builder-section-body">'
+    + '<div class="items-table"><table style="min-width:600px;">'
+    + '<thead><tr>'
+    + '<th style="width:30%">Material / Item</th>'
+    + '<th style="width:10%">Qty</th>'
+    + '<th style="width:12%">Unit</th>'
+    + '<th style="width:13%">Rate (₹)</th>'
+    + '<th style="width:13%">Amount</th>'
+    + '<th style="width:18%">Vendor</th>'
+    + '<th style="width:4%"></th>'
+    + '</tr></thead>'
+    + '<tbody id="poItemsBody">' + renderPOItemRows() + '</tbody>'
+    + '</table></div>'
+    + '<button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="addPOItem()">+ Add Item</button>'
+    + '</div></div>'
+    + '<div class="builder-section">'
+    + '<div class="builder-section-header" onclick="toggleSection(this)">'
+    + '<span class="bsh-title">📝 Notes</span><span class="bsh-toggle open">▾</span></div>'
+    + '<div class="builder-section-body">'
+    + '<textarea class="form-input form-textarea" id="poNotes" rows="3" placeholder="Any notes for vendors...">' + (po.notes||'') + '</textarea>'
+    + '</div></div>'
+    + '</div>'
+    + '<div class="builder-sidebar">'
+    + '<div class="totals-block">'
+    + '<div style="font-family:Playfair Display,serif;font-size:16px;color:var(--gold);margin-bottom:14px;">📊 PO Summary</div>'
+    + '<div id="poSummary"></div>'
+    + '</div>'
+    + '<div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">'
+    + '<button class="btn btn-primary btn-full" onclick="savePO()">💾 Save PO</button>'
+    + '<button class="btn btn-secondary btn-full" onclick="previewPO()">👁 Preview PO</button>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
+
+  document.getElementById('poBuilderMain').innerHTML = html;
+  renderPOSummary();
+}
+
+function renderPOItemRows() {
+  const po = S.currentPO;
+  const vendorOptions = S.vendors.map(v => v.name);
+  return (po.items || []).map((item, i) => {
+    const amt = (parseFloat(item.qty)||0) * (parseFloat(item.rate)||0);
+    const vopts = vendorOptions.map(v => '<option ' + (item.vendor===v?'selected':'') + '>' + v + '</option>').join('');
+    const unitOpts = ['Sheets','Pcs','Meters','Kgs','Sets','Nos'].map(u => '<option ' + (item.unit===u?'selected':'') + '>' + u + '</option>').join('');
+    let row = '<tr id="poi-' + i + '">';
+    row += '<td><input value="' + (item.material||'') + '" oninput="updatePOItem(' + i + ',&quot;material&quot;,this.value)" placeholder="Material name..." style="width:100%;"></td>';
+    row += '<td><input type="number" value="' + (item.qty||'') + '" oninput="updatePOItem(' + i + ',&quot;qty&quot;,this.value)" placeholder="0" style="width:60px;"></td>';
+    row += '<td><select oninput="updatePOItem(' + i + ',&quot;unit&quot;,this.value)" style="width:80px;">' + unitOpts + '</select></td>';
+    row += '<td><input type="number" value="' + (item.rate||'') + '" oninput="updatePOItem(' + i + ',&quot;rate&quot;,this.value)" placeholder="0" style="width:80px;"></td>';
+    row += '<td style="font-family:DM Mono,monospace;font-size:12px;color:var(--gold);padding:0 8px;" id="poi-amt-' + i + '">₹' + fmtNum(amt) + '</td>';
+    row += '<td><select oninput="updatePOItem(' + i + ',&quot;vendor&quot;,this.value)" style="width:100%;">' + vopts + '</select></td>';
+    row += '<td><button class="btn btn-ghost btn-icon" style="padding:4px;" onclick="removePOItem(' + i + ')">✕</button></td>';
+    row += '</tr>';
+    return row;
+  }).join('');
+}
+
+function renderPOSummary() {
+  const el = document.getElementById('poSummary');
+  if (!el) return;
+  const po = S.currentPO;
+  const byVendor = {};
+  (po.items || []).forEach(item => {
+    const v = item.vendor || 'Unassigned';
+    if (!byVendor[v]) byVendor[v] = 0;
+    byVendor[v] += (parseFloat(item.qty)||0) * (parseFloat(item.rate)||0);
+  });
+  const total = Object.values(byVendor).reduce((s,v) => s+v, 0);
+  let html = Object.entries(byVendor).map(([v,amt]) =>
+    '<div class="total-row sub" style="font-size:12px;"><span style="color:var(--text3);">' + v + '</span><span class="total-val" style="font-size:12px;">₹' + fmtNum(amt) + '</span></div>'
+  ).join('');
+  html += '<div class="total-row grand"><span>Grand Total</span><span class="total-val">₹' + fmtNum(total) + '</span></div>';
+  el.innerHTML = html;
+}
+
+window.updatePOItem = function(i, field, val) {
+  const item = S.currentPO.items[i];
+  item[field] = (field === 'material' || field === 'unit' || field === 'vendor') ? val : parseFloat(val)||0;
+  const amt = (parseFloat(item.qty)||0) * (parseFloat(item.rate)||0);
+  const amtEl = document.getElementById('poi-amt-' + i);
+  if (amtEl) amtEl.textContent = '₹' + fmtNum(amt);
+  renderPOSummary();
+};
+
+window.addPOItem = function() {
+  S.currentPO.items.push({ material: '', qty: 1, unit: 'Sheets', rate: 0, vendor: S.vendors[0]?.name || '' });
+  document.getElementById('poItemsBody').innerHTML = renderPOItemRows();
+  renderPOSummary();
+};
+
+window.removePOItem = function(i) {
+  S.currentPO.items.splice(i, 1);
+  document.getElementById('poItemsBody').innerHTML = renderPOItemRows();
+  renderPOSummary();
+};
+
+window.onPOQuoteChange = function(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  S.currentPO.linkedQuote = sel.value;
+  S.currentPO.linkedQuoteId = opt.dataset.id || '';
+};
+
+window.previewPO = function() {
+  collectPOData();
+  renderPOPreview();
+  showScreen('poPreview');
+};
+
+window.openPOPreview = function(id) {
+  const po = S.purchaseOrders.find(p => p.id === id);
+  if (!po) return;
+  S.currentPO = JSON.parse(JSON.stringify(po));
+  renderPOPreview();
+  showScreen('poPreview');
+};
+
+function renderPOPreview() {
+  const po = S.currentPO;
+  // Group items by vendor
+  const byVendor = {};
+  (po.items || []).forEach(item => {
+    const v = item.vendor || 'Unassigned';
+    if (!byVendor[v]) byVendor[v] = [];
+    byVendor[v].push(item);
+  });
+
+  // Build action buttons per vendor
+  const actionsEl = document.getElementById('poPreviewActions');
+  actionsEl.innerHTML = '<button class="btn btn-primary" onclick="window.print()">🖨️ Print All</button>'
+    + Object.keys(byVendor).map(v => {
+      const phone = S.vendors.find(vd => vd.name === v)?.phone || '';
+      return '<button class="btn btn-secondary" onclick="shareWAVendor(&quot;' + v + '&quot;,&quot;' + phone + '&quot;)">'
+        + '💬 WhatsApp ' + v + '</button>';
+    }).join('');
+
+  // Build one sheet per vendor
+  const sheets = Object.entries(byVendor).map(([vendor, items]) => {
+    const total = items.reduce((s,i) => s + (parseFloat(i.qty)||0)*(parseFloat(i.rate)||0), 0);
+    const vendorInfo = S.vendors.find(v => v.name === vendor) || {};
+    const rows = items.map((item, idx) =>
+      '<tr>'
+      + '<td class="num">' + (idx+1) + '</td>'
+      + '<td>' + item.material + '</td>'
+      + '<td class="num">' + item.qty + '</td>'
+      + '<td class="num">' + item.unit + '</td>'
+      + '<td class="num">₹' + fmtNum(item.rate) + '</td>'
+      + '<td class="num">₹' + fmtNum((parseFloat(item.qty)||0)*(parseFloat(item.rate)||0)) + '</td>'
+      + '</tr>'
+    ).join('');
+
+    return '<div class="preview-sheet" style="margin-bottom:32px;">'
+      + '<div class="preview-header">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'
+      + '<div><div class="preview-company">' + S.company.name + '</div>'
+      + '<div class="preview-company-sub">' + S.company.contact + ' · ' + S.company.phone + '</div></div>'
+      + '<div style="text-align:right;"><div style="font-weight:700;font-size:16px;color:#b45309;">PURCHASE ORDER</div>'
+      + '<div style="font-size:12px;color:#666;">' + po.poNo + '</div></div>'
+      + '</div>'
+      + '<div class="preview-meta" style="margin-top:12px;">'
+      + '<div><strong>To:</strong> ' + vendor + '</div>'
+      + '<div><strong>Date:</strong> ' + formatDate(po.date) + '</div>'
+      + (vendorInfo.phone ? '<div><strong>Phone:</strong> ' + vendorInfo.phone + '</div>' : '')
+      + (po.linkedQuote ? '<div><strong>Ref Quote:</strong> ' + po.linkedQuote + '</div>' : '')
+      + '</div></div>'
+      + '<table class="preview-table">'
+      + '<thead><tr><th class="num">Sr.</th><th>Material</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>'
+      + '<tbody>' + rows
+      + '<tr class="preview-grand"><td colspan="5">Total</td><td class="num">₹' + fmtNum(total) + '</td></tr>'
+      + '</tbody></table>'
+      + (po.notes ? '<div style="margin-top:12px;font-size:12px;color:#555;"><strong>Notes:</strong> ' + po.notes + '</div>' : '')
+      + '<div class="preview-sign">'
+      + '<div class="preview-sign-box"><div class="preview-sign-line"></div><div>Authorised by</div><div>' + S.company.contact + '</div></div>'
+      + '<div class="preview-sign-box"><div class="preview-sign-line"></div><div>Vendor Acknowledgement</div></div>'
+      + '</div>'
+      + '</div>';
+  }).join('<div style="page-break-before:always;"></div>');
+
+  document.getElementById('poPreviewSheet').innerHTML = sheets;
+}
+
+window.shareWAVendor = function(vendorName, phone) {
+  const po = S.currentPO;
+  const items = (po.items||[]).filter(i => i.vendor === vendorName);
+  const total = items.reduce((s,i) => s+(parseFloat(i.qty)||0)*(parseFloat(i.rate)||0), 0);
+  const lines = [
+    '*PURCHASE ORDER — ' + S.company.name + '*',
+    'PO No: ' + po.poNo,
+    'Date: ' + formatDate(po.date),
+    '',
+    '*To: ' + vendorName + '*',
+    '',
+    ...items.map((i,idx) => (idx+1) + '. ' + i.material + ' — ' + i.qty + ' ' + i.unit + ' @ ₹' + fmtNum(i.rate) + ' = ₹' + fmtNum((parseFloat(i.qty)||0)*(parseFloat(i.rate)||0))),
+    '',
+    '*Total: ₹' + fmtNum(total) + '*',
+    '',
+    po.notes ? 'Notes: ' + po.notes : '',
+    '_' + S.company.contact + ' · ' + S.company.phone + '_'
+  ].filter(l => l !== '').join('\n');
+
+  const cleanPhone = phone.replace(/[^0-9]/g,'');
+  const url = cleanPhone
+    ? 'https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(lines)
+    : 'https://wa.me/?text=' + encodeURIComponent(lines);
+  window.open(url, '_blank');
+  window.print();
+  toast('WhatsApp opened — PDF will download too');
+};
 
 // ── TOAST ──
 window.toast = function(msg) {
