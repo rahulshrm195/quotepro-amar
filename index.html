@@ -463,6 +463,12 @@ body {
 .search-bar input::placeholder { color: var(--text3); }
 .search-icon { color: var(--text3); font-size: 16px; }
 
+.stat-card.filter-active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(212,168,67,0.25);
+}
+.stat-card.filter-active::before { background: var(--gold); height: 3px; }
+
 /* ── QUOTE BUILDER ── */
 .builder-layout {
   display: grid;
@@ -908,10 +914,10 @@ body {
           <button class="btn btn-primary" onclick="newQuote()">+ New Quote</button>
         </div>
         <div class="dash-stats">
-          <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total Quotes</div></div>
-          <div class="stat-card"><div class="stat-val" id="statConfirmed">0</div><div class="stat-lbl">Confirmed</div></div>
-          <div class="stat-card"><div class="stat-val" id="statSent">0</div><div class="stat-lbl">Sent</div></div>
-          <div class="stat-card"><div class="stat-val" id="statDraft">0</div><div class="stat-lbl">Drafts</div></div>
+          <div class="stat-card filter-active" id="statCardAll" onclick="setStatusFilter('all')" style="cursor:pointer;"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total Quotes</div></div>
+          <div class="stat-card" id="statCardConfirmed" onclick="setStatusFilter('confirmed')" style="cursor:pointer;"><div class="stat-val" id="statConfirmed">0</div><div class="stat-lbl">Confirmed</div></div>
+          <div class="stat-card" id="statCardSent" onclick="setStatusFilter('sent')" style="cursor:pointer;"><div class="stat-val" id="statSent">0</div><div class="stat-lbl">Sent</div></div>
+          <div class="stat-card" id="statCardDraft" onclick="setStatusFilter('draft')" style="cursor:pointer;"><div class="stat-val" id="statDraft">0</div><div class="stat-lbl">Drafts</div></div>
         </div>
         <div class="search-bar">
           <span class="search-icon">🔍</span>
@@ -1183,6 +1189,7 @@ window.doSignOut = async function() {
 
 // ── STATE ──
 window._state = {
+  statusFilter: 'all',
   currentQuote: null,
   currentPO: null,
   quotes: [],
@@ -1821,7 +1828,7 @@ function renderDashboard() {
   document.getElementById('statConfirmed').textContent = confirmed;
   if (document.getElementById('statSent')) document.getElementById('statSent').textContent = sent;
   document.getElementById('statDraft').textContent = draft;
-  renderQuotesList(S.quotes);
+  applyQuoteFilters();
 }
 
 function renderQuotesList(quotes) {
@@ -1864,13 +1871,34 @@ function renderQuotesList(quotes) {
 }
 
 window.filterQuotes = function() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = S.quotes.filter(x =>
+  applyQuoteFilters();
+};
+
+window.setStatusFilter = function(status) {
+  S.statusFilter = status;
+  // Update active state on stat cards
+  ['All','Confirmed','Sent','Draft'].forEach(s => {
+    const el = document.getElementById('statCard' + s);
+    if (el) el.classList.remove('filter-active');
+  });
+  const map = { all: 'statCardAll', confirmed: 'statCardConfirmed', sent: 'statCardSent', draft: 'statCardDraft' };
+  const activeEl = document.getElementById(map[status]);
+  if (activeEl) activeEl.classList.add('filter-active');
+  applyQuoteFilters();
+};
+
+function applyQuoteFilters() {
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const statusFilter = S.statusFilter || 'all';
+  let filtered = S.quotes.filter(x =>
     (x.client?.name || '').toLowerCase().includes(q) ||
     (x.quoteNo || '').toLowerCase().includes(q)
   );
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(x => (x.status || 'draft') === statusFilter);
+  }
   renderQuotesList(filtered);
-};
+}
 
 // ── SCREENS ──
 window.showScreen = function(name, trackHistory) {
